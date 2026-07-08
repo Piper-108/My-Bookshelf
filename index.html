@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookshelf & Review Vault 💖✨</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Syne:wght@700;800&family=VT323&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --barbie-pink: #ff1493;
+            --hot-pink: #ff69b4;
+            --bubblegum: #ffb6c1;
+            --light-pink: #fff0f5;
+            --cyber-purple: #da70d6;
+            --neon-blue: #00ffff;
+            --retro-shadow: 4px 4px 0px 0px #000000;
+            --retro-shadow-sm: 2px 2px 0px 0px #000000;
+            --font-bubbly: 'DynaPuff', cursive;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --font-pixel: 'VT323', monospace;
+            --font-accent: 'Syne', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--light-pink);
+            border-left: 2px solid #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--hot-pink);
+            border: 2px solid #000;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--barbie-pink);
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: #ffe4e1;
+            background-image: 
+                radial-gradient(var(--bubblegum) 15%, transparent 16%),
+                radial-gradient(var(--bubblegum) 15%, transparent 16%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            color: #2a0015;
+            overflow-x: hidden;
+        }
+
+        .y2k-panel {
+            background: white;
+            border: 3px solid #000000;
+            box-shadow: var(--retro-shadow);
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .y2k-btn {
+            border: 3px solid #000000;
+            box-shadow: var(--retro-shadow-sm);
+            border-radius: 8px;
+            font-family: var(--font-bubbly);
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .y2k-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: var(--retro-shadow);
+        }
+
+        .y2k-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px 0px #000000;
+        }
+
+        .bubbly-text {
+            font-family: var(--font-bubbly);
+            text-shadow: 2px 2px 0px #000;
+            -webkit-text-stroke: 1px #000;
+        }
+
+        .book-card {
+            border: 3px solid #000;
+            box-shadow: 6px 6px 0px 0px #000;
+            border-radius: 16px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            background: white;
+        }
+
+        .book-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .book-card:hover {
+            transform: rotate(-1.5deg) scale(1.03);
+            box-shadow: 10px 10px 0px 0px #ff1493, 10px 10px 0px 3px #000;
+        }
+
+        .case-spine {
+            width: 15px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                45deg,
+                #000,
+                #000 4px,
+                #ff69b4 4px,
+                #ff69b4 8px
+            );
+            border-right: 3px solid #000;
+        }
+
+        .binder-container {
+            border: 4px solid #000;
+            box-shadow: 12px 12px 0px 0px #000;
+            border-radius: 20px;
+            background: #fff;
+            position: relative;
+        }
+
+        .binder-rings {
+            position: absolute;
+            left: -15px;
+            top: 10%;
+            height: 80%;
+            width: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .ring {
+            width: 40px;
+            height: 15px;
+            background: linear-gradient(to bottom, #d1d5db, #9ca3af, #d1d5db);
+            border: 2px solid #000;
+            border-radius: 9999px;
+            transform: rotate(-10deg);
+        }
+    </style>
+</head>
+<body class="p-3 sm:p-6 lg:p-8">
+
+    <div class="w-full bg-[#ff69b4] text-white border-4 border-black font-semibold p-2 mb-6 shadow-[4px_4px_0px_0px_#000] flex justify-between items-center text-xs sm:text-sm overflow-hidden whitespace-nowrap">
+        <div class="flex items-center space-x-8">
+            <span class="flex items-center"><i class="fa-solid fa-star text-yellow-300 mr-2"></i> SO FETCH! BOOK CLUB</span>
+            <span class="flex items-center"><i class="fa-solid fa-heart text-white mr-2"></i> RATING 10/10 ON ALL THE DRAMA</span>
+            <span class="flex items-center"><i class="fa-solid fa-heart text-white mr-2"></i> ON WEEKEND WE READ BOOKS</span>
+            <span class="flex items-center"><i class="fa-solid fa-book-open text-white mr-2"></i> 2000s TEEN DIARY CORE v2.0</span>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+        
+        <div class="lg:col-span-7 xl:col-span-8 flex flex-col space-y-6">
+            
+            <div class="y2k-panel p-6 bg-gradient-to-r from-pink-100 via-pink-50 to-purple-100 relative overflow-hidden">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl md:text-5xl bubbly-text text-pink-600 font-extrabold tracking-tight relative cursor-pointer group">
+                            <span id="shelf-title" contenteditable="false" class="outline-none border-b-2 border-dashed border-pink-400 px-1 rounded">My Review Vault</span>
+                            <i class="admin-element hidden fa-solid fa-pen text-xs text-pink-400 ml-2"></i>
+                        </h1>
+                        <p class="text-sm md:text-base font-medium text-pink-700 mt-2 flex items-center">
+                            <span class="mr-2">📁 Subtitle:</span>
+                            <span id="shelf-subtitle" contenteditable="false" class="font-bold outline-none border-b border-pink-300 px-1">Currently Obsessed & Unapologetic 💖</span>
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col space-y-2 bg-white/70 border-2 border-black p-3 rounded-lg shadow-sm">
+                        <span class="text-xs font-bold text-gray-800 uppercase tracking-widest"><i class="fa-solid fa-palette text-[#ff69b4] mr-1"></i> Theme</span>
+                        <div class="flex space-x-1.5">
+                            <button onclick="changeTheme('barbie')" class="w-6 h-6 rounded-full bg-[#ff1493] border border-black"></button>
+                            <button onclick="changeTheme('burnbook')" class="w-6 h-6 rounded-full bg-[#e11d48] border border-black"></button>
+                            <button onclick="changeTheme('bubblegum')" class="w-6 h-6 rounded-full bg-[#ffb6c1] border border-black"></button>
+                            <button onclick="changeTheme('cyber')" class="w-6 h-6 rounded-full bg-[#8b5cf6] border border-black"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="y2k-panel p-4 bg-[#fff0f5] flex flex-col gap-4">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div class="relative w-full md:w-1/3">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa-solid fa-search text-pink-500"></i>
+                        </span>
+                        <input type="text" id="searchInput" oninput="filterBooks()" placeholder="Search title or author..." 
+                            class="w-full pl-9 pr-4 py-2 border-2 border-black rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-400">
+                    </div>
+
+                    <button id="admin-add-btn" onclick="openAddBookModal()" class="y2k-btn bg-[#00ffff] hover:bg-[#a6ffff] text-black px-4 py-2 text-xs font-bold flex items-center space-x-1 hidden">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        <span>ADD BOOK</span>
+                    </button>
+                </div>
+
+                <div class="flex flex-col space-y-2 pt-2 border-t border-dashed border-pink-200">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-black text-pink-700 uppercase tracking-wider">VIBES:</span>
+                        <div id="vibesFilterContainer" class="flex flex-wrap items-center gap-2"></div>
+                        <button onclick="addNewVibePrompt()" class="admin-element hidden px-2 py-0.5 bg-green-200 hover:bg-green-300 border-2 border-black border-dashed text-[10px] font-black rounded-full transition">
+                            <i class="fa-solid fa-plus mr-0.5"></i> Add Vibe
+                        </button>
+                    </div>
+                    
+                    <div class="flex flex-wrap items-center gap-2 pt-1">
+                        <span class="text-xs font-black text-purple-700 uppercase tracking-wider">UNIVERSES:</span>
+                        <div id="universeFilterContainer" class="flex flex-wrap items-center gap-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="bookshelfGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+
+            <!-- Beautiful Mobile-Friendly Spotify Player Integration -->
+            <div class="y2k-panel p-2 bg-black border-4 border-black shadow-[4px_4px_0px_0px_#000]">
+                <!-- Added Y2K Section Title -->
+                <h3 class="text-lg bubbly-text text-pink-600 font-extrabold tracking-tight mb-3">
+                <i class="fa-solid fa-music mr-1.5 text-purple-500 animate-pulse"></i> 
+                Bookish Vibes Playlist ✨
+                </h3>
+                <!-- Simply swap out the link inside 'src' to load your own custom Spotify playlist! -->
+                <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWUOz2BqXwdkF?utm_source=generator&si=59416016c7a042b0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+
+        </div>
+
+        <div class="lg:col-span-5 xl:col-span-4">
+            <div class="sticky top-6">
+                <div class="binder-container p-6 bg-white min-h-[550px] flex flex-col justify-between">
+                    
+                    <div class="binder-rings">
+                        <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+                        <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+                    </div>
+
+                    <div class="pl-6 border-b-2 border-dashed border-pink-200 pb-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-extrabold uppercase tracking-widest text-[#ff1493] bg-[#fff0f5] px-2 py-1 rounded border border-pink-300">
+                                <i class="fa-solid fa-key mr-1"></i> Review Vault
+                            </span>
+                            <div class="flex space-x-2">
+                                <button onclick="toggleEditVault()" id="vaultEditToggleBtn" class="admin-element hidden y2k-btn bg-pink-100 hover:bg-pink-200 text-xs text-black font-extrabold px-3 py-1">
+                                    <i class="fa-solid fa-lock-open mr-1"></i> EDIT VAULT
+                                </button>
+                                <button onclick="saveCurrentVaultEdits()" id="vaultSaveBtn" class="y2k-btn bg-green-300 hover:bg-green-400 text-xs text-black font-extrabold px-3 py-1 hidden">
+                                    <i class="fa-solid fa-check mr-1"></i> SAVE
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="vaultBookHeader" class="mt-4 flex items-center space-x-4">
+                            <div class="w-16 h-20 bg-pink-100 border-2 border-black rounded flex items-center justify-center font-bold text-center text-[10px] overflow-hidden">
+                                <img id="vaultHeaderCover" src="" alt="Cover" class="w-full h-full object-cover hidden">
+                                <span id="vaultHeaderNoCover" class="text-pink-400">📖 Cover</span>
+                            </div>
+                            <div>
+                                <h3 id="vaultHeaderTitle" class="text-xl font-black text-pink-600 tracking-tight">Select a Card</h3>
+                                <p id="vaultHeaderAuthor" class="text-sm font-semibold text-gray-500"></p>
+                                <div id="vaultHeaderRating" class="flex text-yellow-400 text-xs mt-1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pl-6 mt-4 flex-grow flex flex-col">
+                        <div id="binderTabsBar" class="flex border-b-2 border-black overflow-x-auto whitespace-nowrap mb-4 items-center"></div>
+
+                        <div class="bg-[#fffdf9] p-4 border-2 border-black rounded-lg min-h-[300px] shadow-inner flex-grow relative">
+                            
+                            <div id="dynamicTabPanel">
+                                <h4 id="panelSectionTitle" class="text-sm font-extrabold text-pink-600 mb-2 uppercase outline-none">Section Header</h4>
+                                <div id="panelSectionContent" class="text-sm text-gray-700 leading-relaxed outline-none min-h-[180px] p-2 rounded">
+                                    Select a card to show your custom review layouts. Toggle Admin to manage everything!
+                                </div>
+                            </div>
+
+                            <div id="sectionManagementTray" class="mt-4 pt-2 border-t border-dashed border-gray-300 flex items-center justify-between hidden">
+                                <button onclick="renameCurrentSectionHeader()" class="text-xs bg-blue-100 hover:bg-blue-200 border border-black px-2 py-0.5 font-bold rounded">
+                                    <i class="fa-solid fa-signature mr-1"></i> Rename Tab Title
+                                </button>
+                                <button onclick="deleteCurrentSection()" class="text-xs bg-red-100 hover:bg-red-200 border border-black text-red-700 px-2 py-0.5 font-bold rounded">
+                                    <i class="fa-solid fa-trash mr-1"></i> Erase This Section
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pl-6 mt-6 pt-4 border-t border-pink-100 flex items-center justify-between text-xs text-pink-400 font-bold">
+                        <span>📖 DIARY LEDGER NO. 204</span>
+                        <span class="flex items-center"><i class="fa-solid fa-sparkles mr-1 text-yellow-400"></i> DYNAMIC CMS</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Retro styled footer -->
+    <footer class="max-w-7xl mx-auto border-t-4 border-dashed border-black pt-6 pb-8 flex flex-col sm:flex-row items-center justify-between text-sm gap-4">
+        <div class="flex items-center space-x-2 font-bold text-pink-600">
+            <i class="fa-solid fa-bug text-lg animate-bounce"></i>
+            <span>Found a bug or have questions? Drop me a line!</span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="mailto:your-email@domain.com" class="y2k-btn bg-[#ff69b4] text-white px-4 py-2 text-xs font-black tracking-wider flex items-center space-x-2">
+                <i class="fa-solid fa-envelope"></i>
+                <span>EMAIL SUPPORT</span>
+            </a>
+        </div>
+    </footer>
+
+    <div id="addBookModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="y2k-panel bg-white w-full max-w-lg overflow-hidden flex flex-col">
+            <div class="bg-gradient-to-r from-pink-400 to-[#da70d6] text-white p-4 border-b-4 border-black flex justify-between items-center">
+                <h3 class="text-xl bubbly-text font-extrabold text-white"><i class="fa-solid fa-magic-wand-sparkles mr-1"></i> MANAGE RECORD</h3>
+                <button onclick="closeAddBookModal()" class="text-white hover:text-black transition text-xl font-black">&times;</button>
+            </div>
+            
+            <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                <input type="hidden" id="modalBookId">
+                <div>
+                    <label class="block text-xs font-black uppercase text-gray-700 mb-1">Book Title *</label>
+                    <input type="text" id="modalTitle" required class="w-full border-2 border-black p-2 rounded-lg text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase text-gray-700 mb-1">Author *</label>
+                    <input type="text" id="modalAuthor" required class="w-full border-2 border-black p-2 rounded-lg text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase text-gray-700 mb-1">Fictional Universe / Series Name (Optional)</label>
+                    <input type="text" id="modalUniverse" placeholder="e.g., Grishaverse, ACOTAR, Standalone" class="w-full border-2 border-black p-2 rounded-lg text-sm focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-black uppercase text-gray-700 mb-1">Vibe/Tag *</label>
+                        <select id="modalVibe" class="w-full border-2 border-black p-2 rounded-lg text-sm bg-white focus:outline-none"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black uppercase text-gray-700 mb-1">Rating</label>
+                        <div class="flex items-center space-x-1 mt-2 text-xl cursor-pointer" id="ratingStarInput">
+                            <i class="fa-star fa-solid text-yellow-400" onclick="setModalRating(1)"></i>
+                            <i class="fa-star fa-solid text-yellow-400" onclick="setModalRating(2)"></i>
+                            <i class="fa-star fa-solid text-yellow-400" onclick="setModalRating(3)"></i>
+                            <i class="fa-star fa-solid text-yellow-400" onclick="setModalRating(4)"></i>
+                            <i class="fa-star fa-solid text-yellow-400" onclick="setModalRating(5)"></i>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase text-gray-700 mb-1">Cover Image URL</label>
+                    <input type="text" id="modalCoverUrl" placeholder="Enter image link..." class="w-full border-2 border-black p-2 rounded-lg text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase text-gray-700 mb-1">Card Color Override</label>
+                    <input type="color" id="modalCardBg" value="#ffffff" class="w-full h-10 border-2 border-black p-1 rounded-lg cursor-pointer bg-white">
+                </div>
+            </div>
+            <div class="p-4 bg-gray-50 border-t-2 border-black flex justify-end space-x-2">
+                <button onclick="closeAddBookModal()" class="y2k-btn bg-gray-200 text-black px-4 py-2 text-xs font-bold">CANCEL</button>
+                <button onclick="saveBookFromModal()" class="y2k-btn bg-[#00ffff] text-black px-5 py-2 text-xs font-bold">SAVE TO SHELF</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastNotification" class="fixed bottom-6 left-6 z-50 y2k-panel bg-white p-4 max-w-sm flex items-center space-x-3 transition-all duration-300 transform translate-y-24 opacity-0 border-pink-500">
+        <div class="text-2xl text-[#ff1493]"><i class="fa-solid fa-heart"></i></div>
+        <div>
+            <div class="text-xs font-extrabold uppercase tracking-wider text-pink-600">Notification</div>
+            <div class="text-xs text-gray-800" id="toastMessage">Success!</div>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_VIBES = ["Romance", "Fantasy", "Thriller", "Sci-Fi"];
+        const DEFAULT_BOOKS = [
+            {
+                id: "book-1",
+                title: "The Love Hypothesis",
+                author: "Ali Hazelwood",
+                vibe: "Romance",
+                universe: "STEMist",
+                rating: 5,
+                coverUrl: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1611937942i/56732449.jpg",
+                cardBg: "#fff0f5",
+                sections: [
+                    { title: "💭 Thoughts & Commentary", content: "Honestly, this book is a total comfort read. The fake dating trope is handled with absolute chef's kiss efficiency. Adam Carlsen has set the bar so absurdly high for anyone in STEM or academia." },
+                    { title: "💚 Character Deep Dive", content: "Adam Carlsen: Huge green flag. Donates to labs, respects boundaries, literally carries her across campus, and makes her double-espresso shots exactly how she likes. Peak boyfriend material." },
+                    { title: "📝 Quotes", content: "• \"I'm starting to think that maybe I don't need a hypothesis. Maybe I can just love you.\"\n• \"Because I was busy looking at you.\"" }
+                ]
+            }
+        ];
+
+        let books = [];
+        let vibes = [];
+        let universes = ["all"]; 
+        let activeBookId = "";
+        let activeVibeIndex = 0; 
+        let activeFilterGenre = "all";
+        let activeFilterUniverse = "all";
+        let isVaultEditing = false;
+        let selectedModalRating = 5;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedVibes = localStorage.getItem('review_vault_vibes');
+            vibes = savedVibes ? JSON.parse(savedVibes) : [...DEFAULT_VIBES];
+            saveVibesToStorage();
+
+            const savedBooks = localStorage.getItem('review_vault_books');
+            if (savedBooks) {
+                books = JSON.parse(savedBooks);
+            } else {
+                books = JSON.parse(JSON.stringify(DEFAULT_BOOKS));
+                saveBooksToStorage();
+            }
+
+            if (books.length > 0) activeBookId = books[0].id;
+
+            const savedTitle = localStorage.getItem('review_vault_title');
+            if (savedTitle) document.getElementById('shelf-title').innerText = savedTitle;
+            const savedSubtitle = localStorage.getItem('review_vault_subtitle');
+            if (savedSubtitle) document.getElementById('shelf-subtitle').innerText = savedSubtitle;
+
+            const savedTheme = localStorage.getItem('review_vault_theme');
+            if (savedTheme) changeTheme(savedTheme, false);
+
+            document.getElementById('shelf-title').addEventListener('blur', () => {
+                localStorage.setItem('review_vault_title', document.getElementById('shelf-title').innerText);
+                showToast("Shelf Title Updated! ✨");
+            });
+            document.getElementById('shelf-subtitle').addEventListener('blur', () => {
+                localStorage.setItem('review_vault_subtitle', document.getElementById('shelf-subtitle').innerText);
+                showToast("Subtitle Updated! 🌸");
+            });
+
+            rebuildUniversesCache();
+            renderVibesFilterBar();
+            renderUniverseFilterBar();
+            renderBookshelf();
+            if (activeBookId) selectBook(activeBookId);
+        });
+
+        function saveBooksToStorage() { localStorage.setItem('review_vault_books', JSON.stringify(books)); }
+        function saveVibesToStorage() { localStorage.setItem('review_vault_vibes', JSON.stringify(vibes)); }
+
+        function rebuildUniversesCache() {
+            universes = ["all"];
+            books.forEach(b => {
+                if (b.universe && b.universe.trim() !== "") {
+                    const cleaned = b.universe.trim();
+                    if (!universes.includes(cleaned)) universes.push(cleaned);
+                }
+            });
+        }
+
+        function renderVibesFilterBar() {
+            const container = document.getElementById('vibesFilterContainer');
+            container.innerHTML = '';
+
+            const allBtn = document.createElement('button');
+            allBtn.onclick = () => { activeFilterGenre = 'all'; renderVibesFilterBar(); renderBookshelf(); };
+            allBtn.className = `px-3 py-1 text-xs font-bold rounded-full border border-2 border-black transition ${activeFilterGenre === 'all' ? 'bg-black text-white' : 'bg-white text-black'}`;
+            allBtn.innerText = "All";
+            container.appendChild(allBtn);
+
+            vibes.forEach(vibe => {
+                const btnWrapper = document.createElement('div');
+                btnWrapper.className = "relative inline-flex items-center group";
+
+                const mainBtn = document.createElement('button');
+                mainBtn.onclick = () => { activeFilterGenre = vibe; renderVibesFilterBar(); renderBookshelf(); };
+                mainBtn.className = `px-3 py-1 text-xs font-bold border border-2 border-black rounded-full transition ${activeFilterGenre === vibe ? 'bg-black text-white' : 'bg-white text-black'}`;
+                mainBtn.innerText = vibe;
+
+                const delToken = document.createElement('button');
+                delToken.onclick = (e) => { e.stopPropagation(); deleteVibeToken(vibe); };
+                delToken.className = "admin-element hidden absolute -top-2 -right-1 bg-red-500 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center text-[8px] font-black border border-black";
+                delToken.innerHTML = "&times;";
+
+                btnWrapper.appendChild(mainBtn);
+                btnWrapper.appendChild(delToken);
+                container.appendChild(btnWrapper);
+            });
+
+            const selectField = document.getElementById('modalVibe');
+            selectField.innerHTML = '';
+            vibes.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v; opt.innerText = v;
+                selectField.appendChild(opt);
+            });
+            syncAdminElements();
+        }
+
+        function renderUniverseFilterBar() {
+            const container = document.getElementById('universeFilterContainer');
+            container.innerHTML = '';
+
+            universes.forEach(uni => {
+                const btn = document.createElement('button');
+                btn.onclick = () => { activeFilterUniverse = uni; renderUniverseFilterBar(); renderBookshelf(); };
+                btn.className = `px-3 py-0.5 text-xs font-semibold rounded-full border-2 border-black transition ${activeFilterUniverse === uni ? 'bg-purple-600 text-white shadow-inner' : 'bg-purple-50 text-purple-900 hover:bg-purple-100'}`;
+                btn.innerText = uni === 'all' ? "All Series" : uni;
+                container.appendChild(btn);
+            });
+        }
+
+        function addNewVibePrompt() {
+            const name = prompt("Enter new Vibe name:");
+            if (!name || name.trim() === "") return;
+            const cleaned = name.trim();
+            if (vibes.includes(cleaned)) { showToast("Vibe already exists!"); return; }
+            vibes.push(cleaned);
+            saveVibesToStorage();
+            renderVibesFilterBar();
+            showToast(`Added: ${cleaned} 🎉`);
+        }
+
+        function deleteVibeToken(vibeName) {
+            if (!confirm(`Delete vibe tag '${vibeName}'?`)) return;
+            vibes = vibes.filter(v => v !== vibeName);
+            saveVibesToStorage();
+            if (activeFilterGenre === vibeName) activeFilterGenre = "all";
+            renderVibesFilterBar();
+            renderBookshelf();
+        }
+
+        function renderBookshelf() {
+            const grid = document.getElementById('bookshelfGrid');
+            grid.innerHTML = '';
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            books.forEach(book => {
+                const matchesSearch = book.title.toLowerCase().includes(searchTerm) || book.author.toLowerCase().includes(searchTerm);
+                const matchesGenre = activeFilterGenre === 'all' || book.vibe === activeFilterGenre;
+                const matchesUniverse = activeFilterUniverse === 'all' || book.universe === activeFilterUniverse;
+
+                if (matchesSearch && matchesGenre && matchesUniverse) {
+                    const starsHtml = Array.from({ length: 5 }, (_, i) => 
+                        `<i class="fa-star ${i < book.rating ? 'fa-solid text-yellow-400' : 'fa-regular text-gray-300'} text-xs"></i>`
+                    ).join('');
+
+                    const finalCoverUrl = book.coverUrl || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=300';
+                    const card = document.createElement('div');
+                    card.className = `book-card flex p-3 relative ${activeBookId === book.id ? 'ring-4 ring-[#ff1493]' : ''}`;
+                    card.style.backgroundColor = book.cardBg || '#ffffff';
+                    card.setAttribute('onclick', `selectBook('${book.id}')`);
+
+                    card.innerHTML = `
+                        <div class="case-spine absolute left-0 top-0 h-full w-2"></div>
+                        <div class="pl-4 flex flex-col justify-between w-full h-full">
+                            <div class="flex space-x-3">
+                                <div class="w-20 h-28 border-2 border-black rounded relative overflow-hidden bg-pink-100 flex-shrink-0 shadow-sm">
+                                    <img src="${finalCoverUrl}" alt="${book.title}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-grow flex flex-col justify-start">
+                                    <div class="flex flex-wrap gap-1 mb-1">
+                                        <span class="inline-block px-1.5 py-0.5 border border-black text-[9px] font-extrabold uppercase rounded bg-pink-200 text-pink-700 w-max">${book.vibe}</span>
+                                        ${book.universe ? `<span class="inline-block px-1.5 py-0.5 border border-black text-[9px] font-black uppercase rounded bg-purple-200 text-purple-700 w-max"><i class="fa-solid fa-folder-open mr-0.5"></i>${book.universe}</span>` : ''}
+                                    </div>
+                                    <h4 class="font-extrabold text-sm text-gray-900 leading-tight line-clamp-2">${book.title}</h4>
+                                    <p class="text-xs text-gray-500 font-semibold truncate mt-0.5">By ${book.author}</p>
+                                    <div class="flex space-x-0.5 mt-1">${starsHtml}</div>
+                                </div>
+                            </div>
+                            <div class="admin-element hidden flex justify-between items-center mt-3 pt-2 border-t border-dashed border-gray-300">
+                                <button onclick="event.stopPropagation(); openEditBookModal('${book.id}')" class="text-xs text-blue-500 hover:text-blue-700 font-extrabold"><i class="fa-solid fa-edit mr-0.5"></i> Edit</button>
+                                <button onclick="event.stopPropagation(); deleteBook('${book.id}')" class="text-xs text-red-500 hover:text-red-700 font-extrabold"><i class="fa-solid fa-trash mr-0.5"></i> Bin</button>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                }
+            });
+            syncAdminElements();
+        }
+
+        function selectBook(id) {
+            if (isVaultEditing) toggleEditVault();
+            activeBookId = id;
+            const book = books.find(b => b.id === id);
+            if (!book) return;
+
+            renderBookshelf();
+
+            document.getElementById('vaultHeaderTitle').innerText = book.title;
+            document.getElementById('vaultHeaderAuthor').innerText = `By ${book.author}`;
+            document.getElementById('vaultHeaderRating').innerHTML = Array.from({ length: 5 }, (_, i) => 
+                `<i class="fa-star ${i < book.rating ? 'fa-solid' : 'fa-regular'} text-xs"></i>`
+            ).join('');
+
+            const coverImg = document.getElementById('vaultHeaderCover');
+            const noCoverSpan = document.getElementById('vaultHeaderNoCover');
+            if (book.coverUrl) {
+                coverImg.src = book.coverUrl;
+                coverImg.classList.remove('hidden');
+                noCoverSpan.classList.add('hidden');
+            } else {
+                coverImg.classList.add('hidden');
+                noCoverSpan.classList.remove('hidden');
+            }
+
+            if (!book.sections) book.sections = [];
+            activeVibeIndex = 0;
+            renderBinderTabsAndContent();
+        }
+
+        function renderBinderTabsAndContent() {
+            const tabsBar = document.getElementById('binderTabsBar');
+            tabsBar.innerHTML = '';
+            const book = books.find(b => b.id === activeBookId);
+            if (!book) return;
+
+            book.sections.forEach((sec, idx) => {
+                const btn = document.createElement('button');
+                btn.onclick = () => { if (isVaultEditing) return; activeVibeIndex = idx; renderBinderTabsAndContent(); };
+                btn.className = `px-3 py-1 border-t-2 border-x-2 border-black rounded-t-lg font-extrabold text-xs tracking-tight transform transition-all mr-1 ${activeVibeIndex === idx ? 'bg-white text-pink-600 font-black translate-y-[2px]' : 'bg-pink-100/50 hover:bg-white text-gray-700'}`;
+                btn.innerText = sec.title;
+                tabsBar.appendChild(btn);
+            });
+
+            if (isVaultEditing) {
+                const addSecBtn = document.createElement('button');
+                addSecBtn.onclick = addNewSectionBlueprint;
+                addSecBtn.className = "px-2 py-0.5 bg-green-100 hover:bg-green-200 border border-black text-[10px] font-black rounded ml-auto flex items-center";
+                addSecBtn.innerHTML = `<i class="fa-solid fa-plus-square mr-1"></i> ADD SEC`;
+                tabsBar.appendChild(addSecBtn);
+            }
+
+            const activePanelHead = document.getElementById('panelSectionTitle');
+            const activePanelBody = document.getElementById('panelSectionContent');
+            const tray = document.getElementById('sectionManagementTray');
+
+            if (book.sections.length > 0 && book.sections[activeVibeIndex]) {
+                const currentSec = book.sections[activeVibeIndex];
+                activePanelHead.innerText = currentSec.title;
+                
+                // If not editing, display text + any saved attachment image smoothly
+                if (!isVaultEditing) {
+                    let bodyHtml = formatTextToHtml(currentSec.content);
+                    if (currentSec.mediaUrl) {
+                        bodyHtml += `
+                            <div class="mt-4 border-2 border-black rounded-lg overflow-hidden bg-white shadow-[2px_2px_0px_0px_#000]">
+                                <img src="${currentSec.mediaUrl}" alt="Vault Attachment" class="w-full h-auto max-h-60 object-contain mx-auto bg-gray-50">
+                            </div>`;
+                    }
+                    activePanelBody.innerHTML = bodyHtml;
+                    tray.classList.add('hidden');
+                } else {
+                    // While editing, show the raw text area PLUS the media upload attachment tray below it
+                    activePanelBody.innerHTML = `
+                        <div id="editableTextContainer" class="outline-none min-h-[120px]" contenteditable="true">${currentSec.content || ''}</div>
+                        <div class="mt-4 p-2 bg-pink-50 border-2 border-dashed border-pink-300 rounded-md">
+                            <label class="block text-[10px] font-black uppercase text-pink-700 mb-1">
+                                <i class="fa-solid fa-paperclip mr-1"></i> Paste Image/Media URL (JPG, PNG, Web Links):
+                            </label>
+                            <input type="text" id="sectionMediaInput" value="${currentSec.mediaUrl || ''}" placeholder="https://example.com/your-image.jpg" 
+                                class="w-full border-2 border-black p-1 text-xs rounded focus:outline-none bg-white">
+                        </div>
+                    `;
+                    tray.classList.remove('hidden');
+                }
+            } else {
+                activePanelHead.innerText = "No Review Modules Established";
+                activePanelBody.innerHTML = `<p class="text-xs text-gray-400 italic">This ledger node is currently empty.</p>`;
+                tray.classList.add('hidden');
+            }
+        }
+
+        function toggleEditVault() {
+            const activeBook = books.find(b => b.id === activeBookId);
+            if (!activeBook) return;
+
+            isVaultEditing = !isVaultEditing;
+            const panelHead = document.getElementById('panelSectionTitle');
+            const panelBody = document.getElementById('panelSectionContent');
+            const editBtn = document.getElementById('vaultEditToggleBtn');
+            const saveBtn = document.getElementById('vaultSaveBtn');
+
+            if (isVaultEditing) {
+                // 1. Unlock layout areas for direct user input
+                panelHead.contentEditable = "true";
+                panelBody.contentEditable = "true";
+                
+                panelHead.classList.add('bg-white', 'border-b', 'border-pink-300', 'p-1');
+                panelBody.classList.add('bg-white', 'border', 'border-dashed', 'border-pink-400', 'p-2');
+                
+                // Load current raw text inside the editable box
+                if (activeBook.sections[activeVibeIndex]) {
+                    panelBody.innerText = activeBook.sections[activeVibeIndex].content;
+                }
+                
+                editBtn.innerHTML = `<i class="fa-solid fa-lock mr-1"></i> CANCEL`;
+                editBtn.classList.replace('bg-pink-100', 'bg-red-200');
+                saveBtn.classList.remove('hidden');
+            } else {
+                // 2. Safely lock everything back up if canceled
+                panelHead.contentEditable = "false";
+                panelBody.contentEditable = "false";
+                
+                panelHead.classList.remove('bg-white', 'border-b', 'border-pink-300', 'p-1');
+                panelBody.classList.remove('bg-white', 'border', 'border-dashed', 'border-pink-400', 'p-2');
+                
+                editBtn.innerHTML = `<i class="fa-solid fa-lock-open mr-1"></i> EDIT VAULT`;
+                editBtn.classList.replace('bg-red-200', 'bg-pink-100');
+                saveBtn.classList.add('hidden');
+            }
+            // Always refresh tabs bar to show/hide the "ADD SEC" button layout instantly
+            renderBinderTabsAndContent();
+        }
+
+        function saveCurrentVaultEdits() {
+            const activeBook = books.find(b => b.id === activeBookId);
+            if (!activeBook) return;
+            
+            const panelHead = document.getElementById('panelSectionTitle');
+            const editableText = document.getElementById('editableTextContainer');
+            const mediaInput = document.getElementById('sectionMediaInput');
+
+            if (activeBook.sections[activeVibeIndex]) {
+                activeBook.sections[activeVibeIndex].title = panelHead.innerText.trim();
+                // Capture text from our new split layout container safely
+                if (editableText) activeBook.sections[activeVibeIndex].content = editableText.innerText;
+                // Capture the image path link perfectly
+                if (mediaInput) activeBook.sections[activeVibeIndex].mediaUrl = mediaInput.value.trim();
+            }
+
+            saveBooksToStorage();
+            isVaultEditing = false;
+            
+            panelHead.contentEditable = "false";
+            panelHead.classList.remove('bg-white', 'border-b', 'border-pink-300', 'p-1');
+
+            document.getElementById('vaultEditToggleBtn').innerHTML = `<i class="fa-solid fa-lock-open mr-1"></i> EDIT VAULT`;
+            document.getElementById('vaultEditToggleBtn').classList.replace('bg-red-200', 'bg-pink-100');
+            document.getElementById('vaultSaveBtn').classList.add('hidden');
+
+            showToast("Review committed successfully! 💖");
+            renderBinderTabsAndContent();
+        }
+
+        function addNewSectionBlueprint() {
+            const activeBook = books.find(b => b.id === activeBookId);
+            if (!activeBook) return;
+            const name = prompt("Enter a title for your new review section layout:");
+            if (!name || name.trim() === "") return;
+            activeBook.sections.push({ title: "📝 " + name.trim(), content: "Type your notes here..." });
+            activeVibeIndex = activeBook.sections.length - 1;
+            renderBinderTabsAndContent();
+        }
+
+        function renameCurrentSectionHeader() {
+            const activeBook = books.find(b => b.id === activeBookId);
+            if (!activeBook || !activeBook.sections[activeVibeIndex]) return;
+            const name = prompt("Enter new title layout:", activeBook.sections[activeVibeIndex].title);
+            if (name && name.trim() !== "") {
+                activeBook.sections[activeVibeIndex].title = name.trim();
+                renderBinderTabsAndContent();
+            }
+        }
+
+        function deleteCurrentSection() {
+            const activeBook = books.find(b => b.id === activeBookId);
+            if (!activeBook || !activeBook.sections[activeVibeIndex]) return;
+            if (confirm("Erase this section?")) {
+                activeBook.sections.splice(activeVibeIndex, 1);
+                activeVibeIndex = 0;
+                renderBinderTabsAndContent();
+            }
+        }
+
+        function openAddBookModal() {
+            document.getElementById('modalBookId').value = '';
+            document.getElementById('modalTitle').value = '';
+            document.getElementById('modalAuthor').value = '';
+            document.getElementById('modalUniverse').value = '';
+            setModalRating(5);
+            document.getElementById('modalCoverUrl').value = '';
+            document.getElementById('modalCardBg').value = '#ffffff';
+            document.getElementById('addBookModal').classList.remove('hidden');
+        }
+
+        function openEditBookModal(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (!book) return;
+            document.getElementById('modalBookId').value = book.id;
+            document.getElementById('modalTitle').value = book.title;
+            document.getElementById('modalAuthor').value = book.author;
+            document.getElementById('modalUniverse').value = book.universe || '';
+            document.getElementById('modalVibe').value = book.vibe;
+            setModalRating(book.rating);
+            document.getElementById('modalCoverUrl').value = book.coverUrl || '';
+            document.getElementById('modalCardBg').value = book.cardBg || '#ffffff';
+            document.getElementById('addBookModal').classList.remove('hidden');
+        }
+
+        function closeAddBookModal() { document.getElementById('addBookModal').classList.add('hidden'); }
+        function setModalRating(stars) {
+            selectedModalRating = stars;
+            const icons = document.getElementById('ratingStarInput').querySelectorAll('i');
+            icons.forEach((icon, idx) => icon.className = idx < stars ? "fa-star fa-solid text-yellow-400" : "fa-star fa-regular text-gray-300");
+        }
+
+        function saveBookFromModal() {
+            const title = document.getElementById('modalTitle').value.trim();
+            const author = document.getElementById('modalAuthor').value.trim();
+            const universe = document.getElementById('modalUniverse').value.trim();
+            const vibe = document.getElementById('modalVibe').value;
+            const cardBg = document.getElementById('modalCardBg').value;
+            const coverUrl = document.getElementById('modalCoverUrl').value.trim();
+            const bookId = document.getElementById('modalBookId').value;
+
+            if (!title || !author) { showToast("Missing structural criteria fields!"); return; }
+
+            if (bookId) {
+                const book = books.find(b => b.id === bookId);
+                if (book) {
+                    book.title = title; book.author = author; book.universe = universe;
+                    book.vibe = vibe; book.rating = selectedModalRating;
+                    book.coverUrl = coverUrl; book.cardBg = cardBg;
+                }
+            } else {
+                const newBook = {
+                    id: "book-" + Date.now(),
+                    title: title, author: author, universe: universe, vibe: vibe,
+                    rating: selectedModalRating, coverUrl: coverUrl, cardBg: cardBg,
+                    sections: [
+                        { title: "💭 Thoughts & Commentary", content: "Type your observations here..." },
+                        { title: "💚 Character Deep Dive", content: "Track character tropes here..." }
+                    ]
+                };
+                books.push(newBook);
+                activeBookId = newBook.id;
+            }
+
+            saveBooksToStorage();
+            rebuildUniversesCache();
+            renderUniverseFilterBar();
+            renderBookshelf();
+            selectBook(activeBookId);
+            closeAddBookModal();
+            showToast("Vault saved safely! ✨");
+        }
+
+        function deleteBook(id) {
+            if (!confirm("Drop this novel module?")) return;
+            books = books.filter(b => b.id !== id);
+            if (activeBookId === id) activeBookId = books.length > 0 ? books[0].id : '';
+            saveBooksToStorage();
+            rebuildUniversesCache();
+            renderUniverseFilterBar();
+            renderBookshelf();
+            if (activeBookId) selectBook(activeBookId);
+        }
+
+        function filterBooks() { renderBookshelf(); }
+        function formatTextToHtml(text) { return text ? text.replace(/\n/g, '<br>') : ""; }
+        function showToast(msg) {
+            const t = document.getElementById('toastNotification');
+            document.getElementById('toastMessage').innerText = msg;
+            t.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => t.classList.add('translate-y-24', 'opacity-0'), 3000);
+        }
+
+        function changeTheme(theme, notify = true) {
+            const r = document.documentElement;
+            if (theme === 'barbie') {
+                r.style.setProperty('--barbie-pink', '#ff1493'); r.style.setProperty('--hot-pink', '#ff69b4');
+                document.body.style.backgroundColor = '#ffe4e1';
+            } else if (theme === 'burnbook') {
+                r.style.setProperty('--barbie-pink', '#990000'); r.style.setProperty('--hot-pink', '#e11d48');
+                document.body.style.backgroundColor = '#ffe4e6';
+            } else if (theme === 'bubblegum') {
+                r.style.setProperty('--barbie-pink', '#ff69b4'); r.style.setProperty('--hot-pink', '#ff8da1');
+                document.body.style.backgroundColor = '#fff5f6';
+            } else if (theme === 'cyber') {
+                r.style.setProperty('--barbie-pink', '#6d28d9'); r.style.setProperty('--hot-pink', '#8b5cf6');
+                document.body.style.backgroundColor = '#f3e8ff';
+            }
+            localStorage.setItem('review_vault_theme', theme);
+            if (notify) showToast(`Theme updated to ${theme}! ✨`);
+        }
+
+        function syncAdminElements() {
+            const addBtn = document.getElementById('admin-add-btn');
+            if (addBtn && !addBtn.classList.contains('hidden')) {
+                document.querySelectorAll('.admin-element').forEach(el => el.classList.remove('hidden'));
+            }
+        }
+
+        let secretCode = "";
+        window.addEventListener('keydown', function(e) {
+            secretCode += e.key.toLowerCase();
+            if (secretCode.length > 5) secretCode = secretCode.substring(secretCode.length - 5);
+            
+            if (secretCode === "admin") {
+                const addBtn = document.getElementById('admin-add-btn');
+                const titleSpan = document.getElementById('shelf-title');
+                const subtitleSpan = document.getElementById('shelf-subtitle');
+                const adminTokens = document.querySelectorAll('.admin-element');
+                
+                if (addBtn.classList.contains('hidden')) {
+                    addBtn.classList.remove('hidden');
+                    adminTokens.forEach(el => el.classList.remove('hidden'));
+                    titleSpan.setAttribute('contenteditable', 'true');
+                    subtitleSpan.setAttribute('contenteditable', 'true');
+                    showToast("Admin Mode Activated! 🔓");
+                } else {
+                    addBtn.classList.add('hidden');
+                    adminTokens.forEach(el => el.classList.add('hidden'));
+                    titleSpan.setAttribute('contenteditable', 'false');
+                    subtitleSpan.setAttribute('contenteditable', 'false');
+                    if (isVaultEditing) toggleEditVault();
+                    showToast("Admin Mode Deactivated! 🔒");
+                }
+                secretCode = "";
+                renderVibesFilterBar();
+                renderBinderTabsAndContent();
+            }
+        });
+    </script>
+</body>
+</html>

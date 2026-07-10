@@ -414,13 +414,13 @@
                     },
                     {
                        "title": "💚 WHAT MAKES GARRETT GRAHAM A GREEN FLAG",
-                       "content": "Reasons why think that Garrett is a green flag are:\n\nAfter Hannah told him that “her friend had a bad experience with drinking” so that’s why she doesn't drink in public, he honestly doesn't understand guys who would do that to a woman.\n\nHe once said ”You don’t hit on another man’s date. Period. That’s a dick movie.”\n\nHe promised Hannah to look out for her at the party, he wanted to help her see that it’s ok to let down her guard sometimes. He actually did. \n\nHe glued to Hannah’s side all night, guarding her drinks, waiting outside the bathroom for her, and making sure Hannah doesn't get harassed by his friends or the locals they’ve met.\n\nHe chose to stay sober and let Hannah have fun and get drunk, he will make sure that Hannah is safe. The point is, seeing Hannah happy makes him happy. \n\nHe didn’t do it with Hannah when she was drunk, even Hannah told him she wants him so bad herself, because he promised Hannah to look out for her.\n\nHe knows losing virginity is a huge deal for some girls.\n\nEven if he wanted to attack his father so badly, we will not do it. Because he will never lower himself to his father’s level, he will never lose control of his temper and be like him.",
+                       "content": "Reasons why think that Garrett is a green flag are:\n\nAfter Hannah told him that “her friend had a bad experience with drinking” so that’s why she doesn't drink in public, he honestly doesn't understand guys who would do that to a woman.\n\nHe once said ”You don’t hit on another man’s date. Period. That’s a dick movie.”\n\nHe promised Hannah to look out for her at the party, he wanted to help her see that it’s ok to let down her guard sometimes. He actually did. \n\nHe glued to Hannah’s side all night, guarding her drinks, waiting outside the bathroom for her, and making sure Hannah doesn't get harassed by his friends or the locals they’ve met.\n\nHe chose to stay sober and let Hannah have fun and get drunk, he will make sure that Hannah is safe. The point is, seeing Hannah happy makes him happy. \n\nHe didn’t do it with Hannah when she was drunk, even Hannah told him she wants him so bad herself, because he promised Hannah to look out for her.\n\nHe knows losing virginity is a huge deal for some girls.\n\nEven if he wanted to attack his father so badly, we will not do it. Because he will never lower himself to his father’s level, he will never lose control of his temper and be like him.",
                        "mediaUrl": ""
                     },
                     {
                        "title": "📝MY FAV SENTENCES & SENCES",
                        "content": "\"Fear is a fact of life. Don't let it get you down Wellsy. Everyone experiences it.\"-Garrett Graham\n\n\n\n\n“We want to be fashionably late, not asshole late.”- Garrett Graham\n\n\n\n\n“To help you see that it’s ok to let down your guard sometimes. Look, I’m the DD tonight, I’m offering to be more than just your driver. I’ll be your bodyguard, and your bartender, and most importantly, your friend. I promise to look out for you tonight, Welly.”- Garrett Graham\n\n\n\n\n“I know that your friend had a bad experience with drinking in public, but I promise, I’d never let that happen to you.”- Garrett Graham\n\n\n\n\n“Hey, come on, don’t cry. It breaks my fucking heart to hear you cry.”- Garrett Graham\n\n\n\n\n“You’re not broken, baby, I promise.”- Garrett Graham\n\n\n\n\n“Sometimes people sneak up on you and suddenly you don't know how you ever lived without them. How you went about your they and hung out with your friends and fucked other people without having this one important person in your life.”- Garrett Graham\n\n\n\n\nGarrett : How did I go so long without noticing you, damn it? Why did it take seeing a stupid A on your midterm to make me notice?\n\nHannah: It doesn’t matter. You know me now.\n\n\n\n\n“I’m hot for you, Garrett. Only you.”- Hannah Wells\n\n\n\n\n“Baby, I could watch you watching paint dry, and I still wouldn’t be bored.”- Hannah Wells\n\n“I can’t imagine ever giving up my job because the man in my life misses me too much when I’m at work. To me, that’s a red flag if I ever saw one.”- Hannah Wells\n\n\n\n\n“Living well and being happy is how we get over the shit in our past.”- Hannah Wells",
-                    "mediaUrl": ""
+                       "mediaUrl": ""
                     }
                 ]
             },
@@ -428,14 +428,14 @@
                 id: "book-1",
                 title: "The Love Hypothesis",
                 author: "Ali Hazelwood",
-                vibes: ["Romance"], // Changed from vibe: "Romance" to an array
+                vibes: ["Romance"],
                 universe: "STEMist",
                 rating: 4,
                 coverUrl: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1611937942i/56732449.jpg",
                 cardBg: "#fff0f5",
                 sections: [
-                    { title: "💭 Thoughts & Commentary", content: "Honestly, this book is a total comfort read. The fake dating trope is handled with absolute chef's kiss efficiency." },
-                    { title: "📝 Quotes", content: "• \"I'm starting to think that maybe I don't need a hypothesis. Maybe I can just love you.\"" }
+                    { title: "💭 Thoughts & Commentary", content: "Honestly, this book is a total comfort read. The fake dating trope is handled with absolute chef's kiss efficiency.", mediaUrl: "" },
+                    { title: "📝 Quotes", content: "• \"I'm starting to think that maybe I don't need a hypothesis. Maybe I can just love you.\"", mediaUrl: "" }
                 ]
             }
         ];
@@ -451,17 +451,11 @@
         let selectedModalRating = 5;
 
         window.addEventListener('DOMContentLoaded', () => {
-            const savedVibes = localStorage.getItem('review_vault_vibes');
-            vibes = savedVibes ? JSON.parse(savedVibes) : [...DEFAULT_VIBES];
+            // FIX: Force reset local parameters to prioritize master hardcoded values
+            vibes = [...DEFAULT_VIBES];
+            books = JSON.parse(JSON.stringify(DEFAULT_BOOKS));
+            saveBooksToStorage();
             saveVibesToStorage();
-
-            const savedBooks = localStorage.getItem('review_vault_books');
-            if (savedBooks) {
-                books = JSON.parse(savedBooks);
-            } else {
-                books = JSON.parse(JSON.stringify(DEFAULT_BOOKS));
-                saveBooksToStorage();
-            }
 
             if (books.length > 0) activeBookId = books[0].id;
 
@@ -504,6 +498,7 @@
 
         function renderVibesFilterBar() {
             const container = document.getElementById('vibesFilterContainer');
+            if (!container) return;
             container.innerHTML = '';
 
             const allBtn = document.createElement('button');
@@ -531,7 +526,6 @@
                 container.appendChild(btnWrapper);
             });
 
-            // Rebuild the Checkbox Grid inside the Add/Edit modal view dynamically
             const checkboxGrid = document.getElementById('modalVibesCheckboxGrid');
             if (checkboxGrid) {
                 checkboxGrid.innerHTML = '';
@@ -547,6 +541,7 @@
 
         function renderUniverseFilterBar() {
             const container = document.getElementById('universeFilterContainer');
+            if (!container) return;
             container.innerHTML = '';
 
             universes.forEach(uni => {
@@ -580,13 +575,12 @@
 
         function renderBookshelf() {
             const grid = document.getElementById('bookshelfGrid');
+            if (!grid) return;
             grid.innerHTML = '';
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
 
             books.forEach(book => {
-                // Support legacy arrays safely
                 const bookVibes = book.vibes || (book.vibe ? [book.vibe] : []);
-                
                 const matchesSearch = book.title.toLowerCase().includes(searchTerm) || book.author.toLowerCase().includes(searchTerm);
                 const matchesGenre = activeFilterGenre === 'all' || bookVibes.includes(activeFilterGenre);
                 const matchesUniverse = activeFilterUniverse === 'all' || book.universe === activeFilterUniverse;
@@ -596,9 +590,8 @@
                         `<i class="fa-star ${i < book.rating ? 'fa-solid text-yellow-400' : 'fa-regular text-gray-300'} text-xs"></i>`
                     ).join('');
 
-                    // Render multiple visual badges side-by-side
                     const badgesHtml = bookVibes.map(v => 
-                        `<span class="inline-block px-1.5 py-0.5 border border-black text-[9px] font-extrabold uppercase rounded bg-pink-200 text-pink-700 w-max">${v}</span>`
+                        `<span class="inline-block px-1.5 py-0.5 border border-black text-[9px] font-extrabold uppercase rounded bg-pink-200 text-pink-700 w-max mr-1 mb-1">${v}</span>`
                     ).join('');
 
                     const finalCoverUrl = book.coverUrl || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=300';
@@ -615,9 +608,9 @@
                                     <img src="${finalCoverUrl}" alt="${book.title}" class="w-full h-full object-cover">
                                 </div>
                                 <div class="flex-grow flex flex-col justify-start">
-                                    <div class="flex flex-wrap gap-1 mb-1">
+                                    <div class="flex flex-wrap gap-0.5 mb-1">
                                         ${badgesHtml}
-                                        ${book.universe ? `<span class="inline-block px-1.5 py-0.5 border border-black text-[9px] font-black uppercase rounded bg-purple-200 text-purple-700 w-max"><i class="fa-solid fa-folder-open mr-0.5"></i>${book.universe}</span>` : ''}
+                                        ${book.universe ? `<span class="inline-block px-1.5 py-0.5 border border-black text-[9px] font-black uppercase rounded bg-purple-200 text-purple-700 w-max mb-1"><i class="fa-solid fa-folder-open mr-0.5"></i>${book.universe}</span>` : ''}
                                     </div>
                                     <h4 class="font-extrabold text-sm text-gray-900 leading-tight line-clamp-2">${book.title}</h4>
                                     <p class="text-xs text-gray-500 font-semibold truncate mt-0.5">By ${book.author}</p>
@@ -668,6 +661,7 @@
 
         function renderBinderTabsAndContent() {
             const tabsBar = document.getElementById('binderTabsBar');
+            if (!tabsBar) return;
             tabsBar.innerHTML = '';
             const book = books.find(b => b.id === activeBookId);
             if (!book) return;
@@ -696,7 +690,6 @@
                 const currentSec = book.sections[activeVibeIndex];
                 activePanelHead.innerText = currentSec.title;
                 
-                // If not editing, display text + any saved attachment image smoothly
                 if (!isVaultEditing) {
                     let bodyHtml = formatTextToHtml(currentSec.content);
                     if (currentSec.mediaUrl) {
@@ -708,14 +701,13 @@
                     activePanelBody.innerHTML = bodyHtml;
                     tray.classList.add('hidden');
                 } else {
-                    // While editing, show the raw text area PLUS the media upload attachment tray below it
                     activePanelBody.innerHTML = `
                         <div id="editableTextContainer" class="outline-none min-h-[120px]" contenteditable="true">${currentSec.content || ''}</div>
                         <div class="mt-4 p-2 bg-pink-50 border-2 border-dashed border-pink-300 rounded-md">
                             <label class="block text-[10px] font-black uppercase text-pink-700 mb-1">
-                                <i class="fa-solid fa-paperclip mr-1"></i> Paste Image/Media URL (JPG, PNG, Web Links):
+                                <i class="fa-solid fa-paperclip mr-1"></i> Paste Image/Media URL:
                             </label>
-                            <input type="text" id="sectionMediaInput" value="${currentSec.mediaUrl || ''}" placeholder="https://example.com/your-image.jpg" 
+                            <input type="text" id="sectionMediaInput" value="${currentSec.mediaUrl || ''}" placeholder="https://example.com/image.jpg" 
                                 class="w-full border-2 border-black p-1 text-xs rounded focus:outline-none bg-white">
                         </div>
                     `;
@@ -734,39 +726,22 @@
 
             isVaultEditing = !isVaultEditing;
             const panelHead = document.getElementById('panelSectionTitle');
-            const panelBody = document.getElementById('panelSectionContent');
             const editBtn = document.getElementById('vaultEditToggleBtn');
             const saveBtn = document.getElementById('vaultSaveBtn');
 
             if (isVaultEditing) {
-                // 1. Unlock layout areas for direct user input
                 panelHead.contentEditable = "true";
-                panelBody.contentEditable = "true";
-                
                 panelHead.classList.add('bg-white', 'border-b', 'border-pink-300', 'p-1');
-                panelBody.classList.add('bg-white', 'border', 'border-dashed', 'border-pink-400', 'p-2');
-                
-                // Load current raw text inside the editable box
-                if (activeBook.sections[activeVibeIndex]) {
-                    panelBody.innerText = activeBook.sections[activeVibeIndex].content;
-                }
-                
                 editBtn.innerHTML = `<i class="fa-solid fa-lock mr-1"></i> CANCEL`;
                 editBtn.classList.replace('bg-pink-100', 'bg-red-200');
                 saveBtn.classList.remove('hidden');
             } else {
-                // 2. Safely lock everything back up if canceled
                 panelHead.contentEditable = "false";
-                panelBody.contentEditable = "false";
-                
                 panelHead.classList.remove('bg-white', 'border-b', 'border-pink-300', 'p-1');
-                panelBody.classList.remove('bg-white', 'border', 'border-dashed', 'border-pink-400', 'p-2');
-                
                 editBtn.innerHTML = `<i class="fa-solid fa-lock-open mr-1"></i> EDIT VAULT`;
                 editBtn.classList.replace('bg-red-200', 'bg-pink-100');
                 saveBtn.classList.add('hidden');
             }
-            // Always refresh tabs bar to show/hide the "ADD SEC" button layout instantly
             renderBinderTabsAndContent();
         }
 
@@ -780,9 +755,7 @@
 
             if (activeBook.sections[activeVibeIndex]) {
                 activeBook.sections[activeVibeIndex].title = panelHead.innerText.trim();
-                // Capture text from our new split layout container safely
                 if (editableText) activeBook.sections[activeVibeIndex].content = editableText.innerText;
-                // Capture the image path link perfectly
                 if (mediaInput) activeBook.sections[activeVibeIndex].mediaUrl = mediaInput.value.trim();
             }
 
@@ -805,7 +778,7 @@
             if (!activeBook) return;
             const name = prompt("Enter a title for your new review section layout:");
             if (!name || name.trim() === "") return;
-            activeBook.sections.push({ title: "📝 " + name.trim(), content: "Type your notes here..." });
+            activeBook.sections.push({ title: "📝 " + name.trim(), content: "Type your notes here...", mediaUrl: "" });
             activeVibeIndex = activeBook.sections.length - 1;
             renderBinderTabsAndContent();
         }
@@ -838,6 +811,10 @@
             setModalRating(5);
             document.getElementById('modalCoverUrl').value = '';
             document.getElementById('modalCardBg').value = '#ffffff';
+            
+            const checkboxes = document.querySelectorAll('input[name="modalVibeCheckboxes"]');
+            checkboxes.forEach(cb => cb.checked = false);
+
             document.getElementById('addBookModal').classList.remove('hidden');
         }
 
@@ -852,7 +829,6 @@
             document.getElementById('modalCoverUrl').value = book.coverUrl || '';
             document.getElementById('modalCardBg').value = book.cardBg || '#ffffff';
             
-            // Check all checkboxes that match this book's vibe array records
             const bookVibes = book.vibes || (book.vibe ? [book.vibe] : []);
             const checkboxes = document.querySelectorAll('input[name="modalVibeCheckboxes"]');
             checkboxes.forEach(cb => {
@@ -877,13 +853,12 @@
             const coverUrl = document.getElementById('modalCoverUrl').value.trim();
             const bookId = document.getElementById('modalBookId').value;
 
-            // Collect all selected checkbox values into a clean array string stack
             const selectedVibes = [];
             const checkboxes = document.querySelectorAll('input[name="modalVibeCheckboxes"]:checked');
             checkboxes.forEach(cb => selectedVibes.push(cb.value));
 
             if (!title || !author) { showToast("Missing structural criteria fields!"); return; }
-            if (selectedVibes.length === 0) { showToast("Please select at least one Vibe status check!"); return; }
+            if (selectedVibes.length === 0) { showToast("Please select at least one Vibe check!"); return; }
 
             if (bookId) {
                 const book = books.find(b => b.id === bookId);
@@ -898,8 +873,8 @@
                     title: title, author: author, universe: universe, vibes: selectedVibes,
                     rating: selectedModalRating, coverUrl: coverUrl, cardBg: cardBg,
                     sections: [
-                        { title: "💭 Thoughts & Commentary", content: "Type your observations here..." },
-                        { title: "💚 Character Deep Dive", content: "Track character tropes here..." }
+                        { title: "💭 Thoughts & Commentary", content: "Type your observations here...", mediaUrl: "" },
+                        { title: "💚 Character Deep Dive", content: "Track character tropes here...", mediaUrl: "" }
                     ]
                 };
                 books.push(newBook);
@@ -930,6 +905,7 @@
         function formatTextToHtml(text) { return text ? text.replace(/\n/g, '<br>') : ""; }
         function showToast(msg) {
             const t = document.getElementById('toastNotification');
+            if (!t) return;
             document.getElementById('toastMessage').innerText = msg;
             t.classList.remove('translate-y-24', 'opacity-0');
             setTimeout(() => t.classList.add('translate-y-24', 'opacity-0'), 3000);

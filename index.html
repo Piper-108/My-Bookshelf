@@ -156,16 +156,37 @@
             border-radius: 9999px;
             transform: rotate(-10deg);
         }
+
+        /* Y2K Retro Desktop Folder Grid Styles */
+        .y2k-folder-card {
+            background: #fffdf5;
+            border: 3px solid #000;
+            box-shadow: var(--retro-shadow);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .y2k-folder-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px 0px #000;
+            background: #fffbeb;
+        }
+        .y2k-folder-icon {
+            font-size: 3.5rem;
+            color: #ffe066;
+            text-shadow: 2px 2px 0px #000;
+            -webkit-text-stroke: 2px #000;
+        }
     </style>
 </head>
 <body class="p-3 sm:p-6 lg:p-8">
 
     <div class="w-full bg-[#ff69b4] text-white border-4 border-black font-semibold p-2 mb-6 shadow-[4px_4px_0px_0px_#000] flex justify-between items-center text-xs sm:text-sm overflow-hidden whitespace-nowrap">
         <div class="flex items-center space-x-8">
-            <span class="flex items-center"><i class="fa-solid fa-star text-yellow-300 mr-2"></i> SO FETCH! BOOK CLUB</span>
+            <span class="flex items-center"><i class="fa-solid fa-star text-yellow-300 mr-2"></i> SO FETCH! VAULT MASTER</span>
             <span class="flex items-center"><i class="fa-solid fa-heart text-white mr-2"></i> RATING 10/10 ON ALL THE DRAMA</span>
-            <span class="flex items-center"><i class="fa-solid fa-heart text-white mr-2"></i> ON WEEKEND WE READ BOOKS</span>
-            <span class="flex items-center"><i class="fa-solid fa-book-open text-white mr-2"></i> 2000s TEEN DIARY CORE v2.0</span>
+            <span class="flex items-center"><i class="fa-solid fa-heart text-white mr-2"></i> ON WEEKENDS WE BINGE MEDIA</span>
+            <span class="flex items-center"><i class="fa-solid fa-book-open text-white mr-2"></i> 2000s TEEN DIARY CORE v3.0</span>
         </div>
     </div>
 
@@ -184,6 +205,9 @@
                             <span class="mr-2">📁 Subtitle:</span>
                             <span id="shelf-subtitle" contenteditable="false" class="font-bold outline-none border-b border-pink-300 px-1">Currently Obsessed & Unapologetic 💖</span>
                         </p>
+                        <p class="text-xs font-bold text-pink-500 italic mt-1 tracking-wide">
+                        ✨ Warning: Extreme personal opinions ahead. Don't judge my vault, it's confidential! 💅✨ No haters allowed 🤫
+                        </p>
                     </div>
 
                     <div class="flex flex-col space-y-2 bg-white/70 border-2 border-black p-3 rounded-lg shadow-sm">
@@ -198,19 +222,30 @@
                 </div>
             </div>
 
-            <div class="y2k-panel p-4 bg-[#fff0f5] flex flex-col gap-4">
+            <div class="w-full grid grid-cols-2 gap-4 bg-white border-4 border-black p-2.5 shadow-[4px_4px_0px_0px_#000] rounded-xl">
+                <button id="nav-books-btn" onclick="switchView('books')" class="w-full py-3 border-2 border-black rounded-lg font-black text-sm tracking-wide transition-all bg-black text-white shadow-inner flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-book-bookmark"></i>
+                    <span>📖 BOOK SHELF</span>
+                </button>
+                <button id="nav-movies-btn" onclick="switchView('movies')" class="w-full py-3 border-2 border-black rounded-lg font-black text-sm tracking-wide transition-all bg-purple-50 hover:bg-purple-100 text-purple-900 border-dashed flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-film"></i>
+                    <span>🎬 MOVIE VAULT</span>
+                </button>
+            </div>
+
+            <div id="filterConsolePanel" class="y2k-panel p-4 bg-[#fff0f5] flex flex-col gap-4 hidden">
                 <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
                     <div class="relative w-full md:w-1/3">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                             <i class="fa-solid fa-search text-pink-500"></i>
                         </span>
-                        <input type="text" id="searchInput" oninput="filterBooks()" placeholder="Search title or author..." 
+                        <input type="text" id="searchInput" oninput="filterMedia()" placeholder="Search title or creator..." 
                             class="w-full pl-9 pr-4 py-2 border-2 border-black rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-400">
                     </div>
 
-                    <button id="admin-add-btn" onclick="openAddBookModal()" class="y2k-btn bg-[#00ffff] hover:bg-[#a6ffff] text-black px-4 py-2 text-xs font-bold flex items-center space-x-1 hidden">
+                    <button id="admin-add-btn" onclick="openAddMediaModal()" class="y2k-btn bg-[#00ffff] hover:bg-[#a6ffff] text-black px-4 py-2 text-xs font-bold flex items-center space-x-1 hidden">
                         <i class="fa-solid fa-plus-circle"></i>
-                        <span>ADD BOOK</span>
+                        <span id="admin-add-text">ADD RECORD</span>
                     </button>
                 </div>
 
@@ -222,24 +257,24 @@
                             <i class="fa-solid fa-plus mr-0.5"></i> Add Vibe
                         </button>
                     </div>
-                    
-                    <div class="flex flex-wrap items-center gap-2 pt-1">
-                        <span class="text-xs font-black text-purple-700 uppercase tracking-wider">UNIVERSES:</span>
-                        <div id="universeFilterContainer" class="flex flex-wrap items-center gap-2"></div>
-                    </div>
                 </div>
             </div>
 
-            <div id="bookshelfGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+            <div id="folderContainer" class="hidden mb-2">
+                <button onclick="exitFolderView()" class="y2k-btn bg-pink-100 hover:bg-pink-200 text-xs text-black font-extrabold px-4 py-2 flex items-center space-x-2">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>⬅️ BACK TO DIRECTORY</span>
+                </button>
+                <h2 id="currentFolderName" class="text-xl bubbly-text text-purple-600 font-extrabold mt-4 mb-2">Folder Name</h2>
+            </div>
 
-            <!-- Beautiful Mobile-Friendly Spotify Player Integration -->
-            <div class="y2k-panel p-2 bg-black border-4 border-black shadow-[4px_4px_0px_0px_#000]">
-                <!-- Added Y2K Section Title -->
+            <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+
+            <div class="y2k-panel p-4 bg-white border-4 border-black shadow-[4px_4px_0px_0px_#000]">
                 <h3 class="text-lg bubbly-text text-pink-600 font-extrabold tracking-tight mb-3">
-                <i class="fa-solid fa-music mr-1.5 text-purple-500 animate-pulse"></i> 
-                Bookish Vibes Playlist ✨
+                    <i class="fa-solid fa-music mr-1.5 text-purple-500 animate-pulse"></i> 
+                    Bookish Vibes Playlist ✨
                 </h3>
-                <!-- Simply swap out the link inside 'src' to load your own custom Spotify playlist! -->
                 <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWUOz2BqXwdkF?utm_source=generator&si=59416016c7a042b0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
 
@@ -316,11 +351,10 @@
 
     </div>
 
-    <!-- Retro styled footer -->
     <footer class="max-w-7xl mx-auto border-t-4 border-dashed border-black pt-6 pb-8 flex flex-col sm:flex-row items-center justify-between text-sm gap-4">
         <div class="flex items-center space-x-2 font-bold text-pink-600">
             <i class="fa-solid fa-bug text-lg animate-bounce"></i>
-            <span>Found a bug or have questions? Drop me a line!</span>
+            <span>Found a bug or have questions? Wanna share your own opinions? Drop me a line!</span>
         </div>
         <div class="flex items-center space-x-3">
             <a href="mailto:thewitch1188@gmail.com" class="y2k-btn bg-[#ff69b4] text-white px-4 py-2 text-xs font-black tracking-wider flex items-center space-x-2">
@@ -333,31 +367,28 @@
     <div id="addBookModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="y2k-panel bg-white w-full max-w-lg overflow-hidden flex flex-col">
             <div class="bg-gradient-to-r from-pink-400 to-[#da70d6] text-white p-4 border-b-4 border-black flex justify-between items-center">
-                <h3 class="text-xl bubbly-text font-extrabold text-white"><i class="fa-solid fa-magic-wand-sparkles mr-1"></i> MANAGE RECORD</h3>
-                <button onclick="closeAddBookModal()" class="text-white hover:text-black transition text-xl font-black">&times;</button>
+                <h3 id="modalMainHeading" class="text-xl bubbly-text font-extrabold text-white"><i class="fa-solid fa-magic-wand-sparkles mr-1"></i> MANAGE RECORD</h3>
+                <button onclick="closeAddBookModal()" class="text-white hover:text-black transition text-xl font-black">×</button>
             </div>
             
             <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
                 <input type="hidden" id="modalBookId">
                 <div>
-                    <label class="block text-xs font-black uppercase text-gray-700 mb-1">Book Title *</label>
+                    <label id="lblModalTitle" class="block text-xs font-black uppercase text-gray-700 mb-1">Title *</label>
                     <input type="text" id="modalTitle" required class="w-full border-2 border-black p-2 rounded-lg text-sm focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-black uppercase text-gray-700 mb-1">Author *</label>
+                    <label id="lblModalAuthor" class="block text-xs font-black uppercase text-gray-700 mb-1">Author / Creator *</label>
                     <input type="text" id="modalAuthor" required class="w-full border-2 border-black p-2 rounded-lg text-sm focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-black uppercase text-gray-700 mb-1">Fictional Universe / Series Name (Optional)</label>
-                    <input type="text" id="modalUniverse" placeholder="e.g., Grishaverse, ACOTAR, Standalone" class="w-full border-2 border-black p-2 rounded-lg text-sm focus:outline-none">
+                    <label id="lblModalUniverse" class="block text-xs font-black uppercase text-gray-700 mb-1">Series Collection / Universe (Optional)</label>
+                    <input type="text" id="modalUniverse" class="w-full border-2 border-black p-2 rounded-lg text-sm focus:outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-black uppercase text-gray-700 mb-1">Vibes/Tags (Select All That Apply) *</label>
-                        <!-- Replaced select with a dynamic checkbox grid container -->
-                        <div id="modalVibesCheckboxGrid" class="border-2 border-black p-2 rounded-lg text-sm bg-white max-h-32 overflow-y-auto grid grid-cols-1 gap-1">
-                            <!-- Checkboxes will be automatically generated here by JavaScript -->
-                        </div>
+                        <label class="block text-xs font-black uppercase text-gray-700 mb-1">Vibes/Tags (Select All) *</label>
+                        <div id="modalVibesCheckboxGrid" class="border-2 border-black p-2 rounded-lg text-sm bg-white max-h-32 overflow-y-auto grid grid-cols-1 gap-1"></div>
                     </div>
                     <div>
                         <label class="block text-xs font-black uppercase text-gray-700 mb-1">Rating</label>
@@ -371,17 +402,17 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-black uppercase text-gray-700 mb-1">Cover Image URL</label>
+                    <label class="block text-xs font-black uppercase text-gray-700 mb-1">Poster / Cover Image URL</label>
                     <input type="text" id="modalCoverUrl" placeholder="Enter image link..." class="w-full border-2 border-black p-2 rounded-lg text-sm focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-black uppercase text-gray-700 mb-1">Card Color Override</label>
+                    <label class="block text-xs font-black uppercase text-gray-700 mb-1">Card Background Tint</label>
                     <input type="color" id="modalCardBg" value="#ffffff" class="w-full h-10 border-2 border-black p-1 rounded-lg cursor-pointer bg-white">
                 </div>
             </div>
             <div class="p-4 bg-gray-50 border-t-2 border-black flex justify-end space-x-2">
                 <button onclick="closeAddBookModal()" class="y2k-btn bg-gray-200 text-black px-4 py-2 text-xs font-bold">CANCEL</button>
-                <button onclick="saveBookFromModal()" class="y2k-btn bg-[#00ffff] text-black px-5 py-2 text-xs font-bold">SAVE TO SHELF</button>
+                <button onclick="saveMediaFromModal()" class="y2k-btn bg-[#00ffff] text-black px-5 py-2 text-xs font-bold">SAVE TO SHELF</button>
             </div>
         </div>
     </div>
@@ -395,95 +426,938 @@
     </div>
 
     <script>
-        const DEFAULT_VIBES = ["Romance","STEM","Hockey","BL"];
+        const DEFAULT_BOOK_VIBES = ["Romance","STEM","Sports","LGBTQ+"];
         const DEFAULT_BOOKS = [
-            {
-                "id": "book-1783679296846",
-                "title": "The Deal",
-                "author": "Elle Kennedy",
-                "universe": "Off campus",
-                "vibes": ["Romance","Hockey"],
-                "rating": 5,
-                "coverUrl": "https://cdn.kobo.com/book-images/2d93e077-8524-4358-b0cd-34a1ef1a56bc/1200/1200/False/the-deal-96.jpg",
-                "cardBg": "#ffffff",
-                "sections": [
-                    { 
-                      "title": "💭 SUMMARY",
-                      "content": "Fake dating to a real couple.\n\n\n\n\nHannah Wells, a smart, confident music major college student, agrees to tutor Garrett Graham, star hockey player in Briar University, in ethics. In exchange, Garrett pretends to date her to make her crush Jutin jealous. As the fake romance sparks real feelings, Hannah struggles with her childhood trauma, Garrett deals with the pressure of his father. Both must overcome their personal traumas to find love.",
-                      "mediaUrl": ""
-                    },
-                    {
-                       "title": "💚 WHAT MAKES GARRETT GRAHAM A GREEN FLAG",
-                       "content": "Reasons why think that Garrett is a green flag are:\n\nAfter Hannah told him that “her friend had a bad experience with drinking” so that’s why she doesn't drink in public, he honestly doesn't understand guys who would do that to a woman.\n\nHe once said ”You don’t hit on another man’s date. Period. That’s a dick movie.”\n\nHe promised Hannah to look out for her at the party, he wanted to help her see that it’s ok to let down her guard sometimes. He actually did. \n\nHe glued to Hannah’s side all night, guarding her drinks, waiting outside the bathroom for her, and making sure Hannah doesn't get harassed by his friends or the locals they’ve met.\n\nHe chose to stay sober and let Hannah have fun and get drunk, he will make sure that Hannah is safe. The point is, seeing Hannah happy makes him happy. \n\nHe didn’t do it with Hannah when she was drunk, even Hannah told him she wants him so bad herself, because he promised Hannah to look out for her.\n\nHe knows losing virginity is a huge deal for some girls.\n\nEven if he wanted to attack his father so badly, we will not do it. Because he will never lower himself to his father’s level, he will never lose control of his temper and be like him.",
-                       "mediaUrl": ""
-                    },
-                    {
-                       "title": "📝MY FAV SENTENCES & SENCES",
-                       "content": "\"Fear is a fact of life. Don't let it get you down Wellsy. Everyone experiences it.\"-Garrett Graham\n\n\n\n\n“We want to be fashionably late, not asshole late.”- Garrett Graham\n\n\n\n\n“To help you see that it’s ok to let down your guard sometimes. Look, I’m the DD tonight, I’m offering to be more than just your driver. I’ll be your bodyguard, and your bartender, and most importantly, your friend. I promise to look out for you tonight, Welly.”- Garrett Graham\n\n\n\n\n“I know that your friend had a bad experience with drinking in public, but I promise, I’d never let that happen to you.”- Garrett Graham\n\n\n\n\n“Hey, come on, don’t cry. It breaks my fucking heart to hear you cry.”- Garrett Graham\n\n\n\n\n“You’re not broken, baby, I promise.”- Garrett Graham\n\n\n\n\n“Sometimes people sneak up on you and suddenly you don't know how you ever lived without them. How you went about your they and hung out with your friends and fucked other people without having this one important person in your life.”- Garrett Graham\n\n\n\n\nGarrett : How did I go so long without noticing you, damn it? Why did it take seeing a stupid A on your midterm to make me notice?\n\nHannah: It doesn’t matter. You know me now.\n\n\n\n\n“I’m hot for you, Garrett. Only you.”- Hannah Wells\n\n\n\n\n“Baby, I could watch you watching paint dry, and I still wouldn’t be bored.”- Hannah Wells\n\n“I can’t imagine ever giving up my job because the man in my life misses me too much when I’m at work. To me, that’s a red flag if I ever saw one.”- Hannah Wells\n\n\n\n\n“Living well and being happy is how we get over the shit in our past.”- Hannah Wells",
-                       "mediaUrl": ""
-                    }
-                ]
-            },
-            {
-  "id": "book-1783713903099",
-  "title": "The Mistake",
-  "author": "Elle Kennedy",
-  "universe": "Off campus",
+             {
+                "id": "media-1783781237017",
+  "title": "Heated Rivalry",
+  "author": "Rachel Reid",
+  "universe": "Game changer",
   "vibes": [
     "Romance",
-    "Hockey"
+    "Sports",
+    "LGBTQ+"
   ],
   "rating": 5,
-  "coverUrl": "https://m.media-amazon.com/images/I/811M8UKz6cL._AC_UF1000,1000_QL80_.jpg",
+  "folder": "My summer read list",
+  "coverUrl": "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1764956889i/220966494.jpg",
   "cardBg": "#ffffff",
   "sections": [
     {
-      "title": "💭 Thoughts & Commentary",
-      "content": "Type your observations here...",
+      "title": "💭 SUMMARY",
+      "content": "Enemies to lovers.\n\n\n\n\nShane Hollander, the captain of Montreal Voyageurs, known for his immense talent and a clean-cut reputation. Ilya Rozanov, the captain of the Boston Bear, the cocky, self-proclaimed king of the ice.\n\n\n\n\nPublicly, they are fierce competitors, the rivalry on ice. Secretly, their passionate friends-with-benefits affair turned into an undeniable, deep love.\n\n\n\n\nBecause of the hockey culture and their public images, they must keep their relationship completely hidden.",
       "mediaUrl": ""
     },
     {
-      "title": "💚 Character Deep Dive",
-      "content": "Track character tropes here...",
+      "title": "💚 HIGHLIGHT MOMENTS",
+      "content": "♡ “The thing is… I kind of prefer to be the hole. Then the peg.”- Shane Hollander\n\n\n\n\n♡ “I think I’m gay,” Shane blurted out.\n\nIlya looked at him, startled, for a moment. Then he laughed. “Oh yeah? What gives you that idea?”\n\nShane glared at him, which made Ilya laugh more.\n\n“The last time my dick was in your mouth,I thought you might be a little gay,” Ilya teased.\n\n“Fuck off. You’re not gay.”\n\n“No,” Ilya said, serious again. “Not completely.”\n\n“Well… I think I might be. Completely.”\n\n\n\n\n♡ Shane flinched and fiddled with the can of ginger ale that he hadn't even opened. “I can't keep pretending I don't like you,\" he said finally. \n\n\"You don't like me,\"' Ilya argued. \n\n\"I do. I... I maybe like you too much.”\n\n\n\n\n♡ (During skype call)\n\nShane kissed the tips of two fingers and reached out and touched them to the screen.\n\nAnd Ilya’s heart fucking stopped.\n\n\n\n\n♡ Shane had taken advantage of the moment, while Ilya had still been asleep, as an opportunity to drink his fill of him. Ilya had been on his back, his arm draped over his forehead, his long fingers curled against the pillow. Shane had traced a fingertip down that arm, over the swell of Ilya's bicep, because he couldn’t help it. The morning  was making everything beautiful, and Shane was  so in love, so he had leaned in and lightly kissed Ilya's wrist.\n\n\n\n\n♡ Ilya shrugged, and he looked like he was possibly blushing. “I have this problem,” he mumbled.\n\nShane waited.\n\n“I like women. I always was thinking that to get married would be nice. Kids. All of that. Someday. But… this problem will not go away.”\n\nShane bit his lip. “Tell me about this problem.”\n\n“Is so annoying.” Ilya sighed, and Shane could see him fighting a grin. “Always I am with beautiful women. Wonderful women. Everywhere.”\n\n\"Sounds rough \"\n\n“Yes. Listen. These women, they are so sexy and fun, but is no matter. I cannot stop thinking about this short fucking hockey player with these stupid freckles and a weak backhand.\"\n\n“A weak backhand?\" Shane couldn't stop smiling.\n\n\"Yes. And he is just so boring and he drives a terrible car and...that is my problem. All of these beautiful women and I am always wishing they were him.\n\nIlya bent to take his third shot. “Is terrible problem.\" \n\nFuck, Shane was going start crying right here in his games room. He swallowed and steadied himself. \"Do you want the problem to go away?\" \"No,\" Ilya said seriously, looking Shane dead in the eye. \"I do not want the problem to ever go away.”\n\n\n\n\n♡ “I love you.”\n\n“Shane froze. And then Ilya froze.\n\n“Holy shit,” Shane whispered. It wasn’t how he had meant to respond.\n\n“I…” Ilya’s eyes were so wide and so scared.\n\n“I love you too,” Shane said.\n\nIlya gave a shaky smile and exhaled. “Thank Christ.:\n\n“Does it… does it feel like agony for you too?”\n\nIlya started to nod, then stopped. He shook his head slowly instead.\n\n“Not anymore.”\n\n\n\n\n♡ “I’m coming to the cottage.”- Ilya Rozanov\n\n\n\n\n♡”Lovers.”- Ilya Rozanov\n\n\n\n\n♡ “So when?” Mom asked. She seemed desperate to figure out the timeline of this thing. Shane could see her mentally replaying the past several seasons in her head.\n\n“Since, um, our roomie year,” Shane mumbled.\n\nHe didn’t think his parents could possibly look more shocked than they already had, but they definitely looked more shocked at this news.\n\n“You can’t have been…since your rookie season?” His mother gasped.\n\n“No,” Ilya said. “That’s not right. Was before that.”\n\nNot helping, Ilya.\n\n“Before that?” Mom asked.\n\n“A little before,” Ilya clarified. “Summer before.”\n\n“You’ve been…in love this whole time?”\n\n“God no,” Ilya said at the same time.\n\n“But then…” Mom started. “Oh,” she said. And blushed. “I see.”\n\n\n\n\n♡ “Then I will bring you to that dock out there. I will have hundreds of candles all over it…”\n\n“That sounds like a fire hazard.”\n\n“Is on the water, Hollander. Fucking relax. Will be beautiful, you will love it. The candles. The lake. The full moon.”\n\n“Oh, is it a clear night?”\n\n“Yes, of course. And I will get on one knee—”\n\n“Ilya—”\n\n“And I will say ‘Shane Hollander, will you please marry me so I can become Canadian citizen faster?’”\n\nShane burst out laughing, and shoved him. \"You're such an asshole.”\n\n“And you will say yes, because you are a nice, helpful guy.”\n\n“No,” Shane said, taking his hand. “I will say yes because I will still be madly in love with you. And I will want to spend the rest of my life with you.”",
+      "mediaUrl": ""
+    },
+    {
+      "title": "📝 LAS VEGAS SCENCE: ILYA'S POV",
+      "content": "Here's the extra content from Rachel Reid's website.\n\n\n\nJune 2014—Las Vegas\n\n\n\n\nIlya only had three minutes to pull himself together.\n\n\n\n\nTwo minutes and fifty seconds, actually.\n\n\n\n\nHe was gripping the counter in a bathroom backstage at the NHL Awards, trying to force down the panic that had taken hold of him. It had been simmering all day, finally boiling over when he’d spotted Shane Hollander backstage.\n\n\n\n\nIt had been a wild few months. He was a Stanley Cup champion now, and it intermittently felt incredible and surreal and…empty.\n\n\n\n\nHis father wasn’t well. If there had been any uncertainty about that before, going back to Russia for the Olympics had ended it. It had to be Alzheimer’s, and Ilya needed to deal with it because no one else would. Not his brother, not his father’s wife. They both insisted that nothing was wrong with Grigori Rozanov.\n\n\n\n\nIlya was flying to Moscow next week. First back to Boston tomorrow to pack and take care of some things before leaving for the rest of the summer. He wished he could stay in Boston, or go somewhere else entirely. Somewhere relaxing, or fun. When was the last time he’d enjoyed a summer?\n\n\n\n\nHe’d bet Hollander enjoyed every moment of his summers. Soaking up the sun along with the adoration of his friends and family at his stupid fucking lake house thing. Not a care in the world.\n\n\n\n\nIlya hadn’t seen Hollander off the ice since the Olympics. Hadn’t spoken to him since then.\n\n\n\n\nHe’d thought about him every day.\n\n\n\n\nHe’d thought about the way Hollander had found him in the stands of the Sweden vs. Finland game in Sochi, and had asked if he was all right. He’d thought about how strong the urge had been for Ilya to wrap Hollander in his arms and just hold him. Pull him against his chest so Ilya could bury his face in his short, glossy hair and breathe him in. It had been so fucking scary, that urge. The way Ilya’s heart had skipped when he’d spotted Hollander approaching him, and the way he’d wanted to tell him everything.\n\n\n\n\nHollander was waiting for him, now. Not because he wanted to see him, but because they were presenting an award together. Most Sportsmanlike, which, Ilya had to admit, was funny. He’d told himself all day that it would be fine, seeing Hollander again. But as soon as he’d laid eyes on him, Ilya had felt an overwhelming need to hide. He’d dashed away, hopefully without Hollander seeing him.\n\n\n\n\nSo now Ilya was hiding in a bathroom when he was supposed to be standing at Hollander’s side, about to walk onto a stage to play up their rivalry for laughs. He stared at himself in the mirror. Despite his father’s unhappiness with the length of Ilya’s hair, Ilya hadn’t cut it since well before the Olympics. Maybe because of his father’s unhappiness. It was now long enough that he often tied it back, as he had tonight. He thought it looked good, with the tuxedo. Distinguished. Sexy.\n\n\n\n\nHe could really stand to get laid tonight. He’d love to stop thinking for a while.\n\n\n\n\nHe checked the time on his phone and decided that, yes, he needed to get out there. Uncurling his fingers from the counter, he straightened and rolled his shoulders back. He took one slow breath, forced his face into a more relaxed, unbothered expression, and left the bathroom.\n\n\n\n\nHe spotted Hollander at the edge of the stage, glancing around frantically. Ilya sauntered up behind him. “Looking for me?”\n\n\n\n\nHollander spun around. He was wearing a tuxedo and a scowl, and his hair was neatly parted on the side like a child who was getting his school picture taken. “Fuck, Rozanov. What the fuck? We’re on in like five seconds!”\n\n\n\n\nEvery time Ilya encountered Hollander, whether on the ice or off, he hoped that maybe this time he wouldn’t find him so fucking irresistible. He hoped he wouldn’t want to watch the irritation in Hollander’s dark eyes shift to desire. He hoped he wouldn’t want to be thrown against a wall by the man, and let him take his anger out on Ilya for a bit.\n\n\n\n\nThis time, like every time, those hopes were swiftly shattered.\n\n\n\n\n“Fifty seconds,” Ilya said calmly. “We are fine.”\n\n\n\n\nHollander’s mouth dropped open, eyes blazing. “Does it matter to you that everyone backstage has been having a heart attack looking for you?”\n\n\n\n\n“Not really.” At the moment Ilya didn’t care about anything other than the way Hollander’s freckles looked darker than usual, as if he’d been out in the sun recently.\n\n\n\n\n“Where were you, anyway?” Hollander asked tightly.\n\n\n\n\nIlya went with the most infuriating answer. “Busy.”\n\n\n\n\nHollanders eyes narrowed. “Oh yeah? With who?”\n\n\n\n\nGod, was he jealous? Did he hate knowing that Ilya slept with other people? It was dangerous to even consider. “We’re on.”\n\n\n\n\nHe walked quickly onto the stage, wishing he could see the furious expression on Hollander’s face as he trailed behind him. The audience—most of whom hated Ilya, loved Hollander, and were jealous of both of them—applauded as he made his way to the podium. Ilya found the teleprompter with their dialogue, and took a breath. He wasn’t a fan of reading English aloud to an audience.\n\n\n\n\n“Sportsmanship,” he said cheerfully, “is very important.”\n\n\n\n\nThe audience laughed.\n\n\n\n\n“I didn’t know you knew what that word meant, Rozanov,” Hollander read. He sounded authentically angry with Ilya.\n\n\n\n\n“Of course I know. It is like when I steal the puck from you and score a goal, you are not a sore loser about it.”\n\n\n\n\n“Or when I score a hat trick against your team, you graciously accept defeat.”\n\n\n\n\n“Or,” Ilya said in his most obnoxious tone, “when I win the Stanley Cup, you are impressed by my achievement.”\n\n\n\n\nThat got a lot of laughter.\n\n\n\n\n“Anyway,” Hollander said grumpily, “here are this year’s nominees.”\n\n\n\n\n“Hey,” Ilya said, still reading from the teleprompter, “before we give out the award, can I get a selfie?”\n\n\n\n\n“What?”\n\n\n\n\n“Just a quick one. I mean, when will this happen again, right?”\n\n\n\n\n“Fine, but hurry up.”\n\n\n\n\nIlya was excited for this part. He took out his phone, actually opened the camera app, then wrapped one arm around Hollander’s shoulders while holding the phone out with the other. He could see Hollander’s irritated expression on the phone screen.\n\n\n\n\nIlya took several photos. It was stupid, wanting to have them, but that didn’t stop him. He did want the photos, even if Hollander’s face was all tight with disapproval. Even if Hollander never wanted to touch him again, Ilya would have these photos.\n\n\n\n\nHe curled his fingers against the soft fabric of Hollander’s tuxedo jacket, and into the hard muscle beneath. He turned his head, just slightly, to bring his lips momentarily closer to Hollander’s hair. He smelled like mint and citrus, just as he had the last time Ilya had been this close to him. When Ilya had kissed him breathless before pushing him onto a bed.\n\n\n\n\nHollander’s irritation was so strong that Ilya could practically see the waves of it radiating from his tense shoulders. Ilya wanted all of it. He wanted Hollander to unleash it on him, then kiss him and order Ilya to fuck him. Ilya wanted Hollander to overwhelm him until he couldn’t think of anything else.\n\n\n\n\nIlya let his fingers drag across the back of Hollander’s neck as he removed his arm from around his shoulders. He didn’t miss the tiny gasp that escaped from Hollander’s lips. Ilya’s own lips twitched with the urge to stretch into a wide grin.\n\n\n\n\nWhen they finished their spiel, and after Hollander grumpily thrust the trophy into the winner’s hands—a forward for Edmonton. Nice guy. Whatever—Hollander turned on his heel and marched off the stage. Ilya sauntered after him.\n\n\n\n\nHollander entered the same backstage bathroom Ilya had been hiding in earlier. Ilya silently counted to ten, then followed him, not at all surprised that Hollander had left the door unlocked.\n\n\n\n\nIlya barely managed to lock the door behind him before he had Hollander pressed against a wall. Hollander’s dark eyes gleamed with anger and lust, a combination that Ilya had never been able to resist. A combination that Ilya had missed.\n\n\n\n\nHe’d missed him.\n\n\n\n\n“Well?” Ilya asked.\n\n\n\n\n“Well what?”\n\n\n\n\nIlya’s stomach flipped and his cock twitched. This fucking guy. Ilya decided to push his luck, and pointed to the floor. “Are you not going to suck my dick?”\n\n\n\n\n“Fuck you! Why don’t you suck mine?”\n\n\n\n\nThat definitely wasn’t going to happen in this gross bathroom, but Ilya kept his expression neutral and hummed softly, as if considering the offer. Helplessly, he brushed his fingertips along the sharp line of Hollander’s smooth jaw. “Maybe ask nice.”\n\n\n\n\nIlya wondered if he had pushed too far. If anger would overtake the lust in Hollander’s dark eyes and Ilya would be shoved backward. If Ilya would have to watch him walk awa—\n\n\n\n\n“Please.”\n\n\n\n\nIt was barely a whisper, but Hollander’s single word rocketed through Ilya. He managed to maintain his cool exterior, but barely. Instead of giving in to what they both wanted, Ilya pushed further.\n\n\n\n\n“You want me to kneel on this dirty bathroom floor? You have to ask nicer than that, Hollander.”\n\n\n\n\n“Please,” Hollander said again, his voice strained and shaking, probably from the effort it took to not punch Ilya. Or to not die of embarrassment. “Get on your knees and suck my dick. Please.”\n\n\n\n\nIlya raked his gaze over Hollander’s body, pausing at the obvious bulge in his tuxedo pants. Ilya cupped him through the sleek fabric, and enjoyed the way Hollander had to close his eyes, and the way he gasped.\n\n\n\n\nIlya leaned in, hovering his lips next to Hollander’s ear and said, “No.”\n\n\n\n\nHollander’s reaction was even better than Ilya had hoped. His eyes flew open, brow pinched with confusion. “What?”\n\n\n\n\n“No. I will not do anything to you in here.” Ilya was suddenly struck by a fantastic idea. “We will go back out there, and sit in our seats, and then go to the party. And then, when you have been waiting all night for it, you will come to my hotel room. And I will maybe do more than suck your dick.”\n\n\n\n\n“You’re really going to leave me like this?” Hollander asked, stalling pointlessly.\n\n\n\n\n“Yes. For now.”\n\n\n\n\nAnother few seconds of hesitation, and then, with an absurd amount of irritation, “Fine.”\n\n\n\n\n“Aw. I will make a deal: if you win MVP tonight, I will blow you, fuck you…whatever you want.”\n\n\n\n\nHollander stared at him, and Ilya could practically see the suggestion rolling around in his brain. He would say yes to this. He wouldn’t be able to resist such an offer. Not when Ilya had made it a competition with a winner and a loser.\n\n\n\n\n“And if you win?”\n\n\n\n\nIlya grinned. He knew this man so well, without really knowing him at all. “I will let you know.”\n\n\n\n\nNow would be the moment to make his exit. Leave Hollander confused and horny without showing how badly Ilya wanted him too. How much he’d missed him. But Ilya couldn’t resist stealing a kiss, now that he finally had him alone.\n\n\n\n\nBefore he could overthink it, he grabbed Hollander’s lapel and kissed him. It was hard and messy and probably more urgent than Ilya would have liked. It still wasn’t the way he wanted to kiss Hollander. But if he kissed him the way he wanted to—a slow exploration of Hollander’s mouth that would provide Ilya with enough memories to get him through the long summer ahead—they would never leave this bathroom.\n\n\n\n\nIt was fucking stupid.\n\n\n\n\nIlya let him go. “Good luck tonight.”\n\n\n\n\nHe left without looking back.\n\n\n\n\n \n\n\n\n\n***\n\n\n\n\n \n\n\n\n\nWhy was Ilya so nervous?\n\n\n\n\nHe’d won the MVP award (of course), and now he was waiting for his real prize. Hook-ups didn’t ever make him nervous. And Hollander was just a hook-up. More interesting, maybe, than other people Ilya slept with. More fun to tease. And, yes, hotter. Objectively.\n\n\n\n\nBut still. There was no reason for the butterflies in Ilya’s stomach.\n\n\n\n\nIn his hotel suite, Ilya removed his tuxedo jacket and his bowtie, then his shoes and socks. He felt over heated when he wanted to seem perfectly in control of everything, including his own body temperature. He unbuttoned the top three buttons on his shirt, then, after a quick glance in the full-length mirror, a fourth button.\n\n\n\n\nHe smoothed his palms over his slicked back hair, taming any strays that had escaped.\n\n\n\n\nJane: I’m here.\n\n\n\n\nIlya smiled at his phone, the butterflies settling immediately. He unlocked the door and opened it just in time for Hollander to grab the handle on the other side. Ilya walked to the middle of the room, and turned to face him.\n\n\n\n\nHollander was still wearing his tuxedo jacket, but had removed his tie. His cheeks were slightly pink, either from rushing up to Ilya’s room, or from alcohol.\n\n\n\n\n“Here to congratulate me?” Ilya said calmly.\n\n\n\n\n“I guess.”\n\n\n\n\nIlya playfully spread his arms, waiting for Hollander to actually say the word.\n\n\n\n\n“Congratulations,” he said, not sounding like he meant it at all.\n\n\n\n\n“Thank you. Now take off your clothes.”\n\n\n\n\nTo Ilya’s delight, he obeyed immediately, and in a very Shane Hollander way. Each piece of his suit was folded flat and draped over the back of the sofa, as if he’d need to wear the tuxedo again tomorrow or something. Ilya watched him, finding the whole thing more amusing than seductive.\n\n\n\n\n“Shouldn’t we—” Hollander said when he was wearing only his boxer briefs. “I mean. There are windows.”\n\n\n\n\n“We are on the sixteenth floor.”\n\n\n\n\n“Yeah, but…”\n\n\n\n\nSo much for fucking Hollander against the window with the Vegas strip stretching out beneath them. Oh well. Ilya had lots of ideas. He silently headed for the bedroom, letting Hollander follow behind him. He drew the curtains closed, but didn’t let Hollander get too comfortable.\n\n\n\n\n“On the bed,” Ilya said firmly, without looking at him. When he finally turned to face him, Hollander was already on the bed, still in his underwear. His skin looked flawless and golden in the low lamplight, his hair slightly disheveled from undressing. He was absently chewing on his lower lip, and staring at Ilya as if awaiting further instruction.\n\n\n\n\nIlya left the room.\n\n\n\n\nHe shouldn’t have invited Hollander to his room. They’d managed to avoid each other for months and Ilya could have simply let that continue. Forever. Because that was what made sense. Shane Hollander sprawled out on Ilya’s bed, offering himself as a fucking prize, did not make sense. The way Ilya was more tempted to gather Hollander in his arms and hold him all night than fuck him didn’t make sense. The way Ilya knew that if he kissed him he’d never stop didn’t make sense.\n\n\n\n\nHe needed to be careful tonight.\n\n\n\n\nIlya poured vodka into a glass, downed it, then poured another. Finally, after a long, steadying breath, he returned to the bedroom, drink in hand. Hollander was still on the bed, still waiting. God.\n\n\n\n\nIlya sat in a chair at the end of the bed, and silently took a sip of vodka. “Mm. I am impressed with this hotel. This vodka is not so easy to find.”\n\n\n\n\n“Okay,” Hollander said. There was clear impatience in his tone, which only made Ilya want to stretch this out more.\n\n\n\n\nInstead, he decided to test the limits of Hollander’s obedience.\n\n\n\n\n“Touch yourself.”\n\n\n\n\nHollander’s eyes went wide. “What?”\n\n\n\n\nThis wasn’t something they’d ever done before. Maybe Hollander would give his own dick a few lazy strokes while waiting for Ilya to put a condom on, or a few desperate strokes to get himself over the edge while Ilya plowed him. But not like this.\n\n\n\n\n“Show off for me,” Ilya clarified. “Let me watch you.”\n\n\n\n\nHollander did not seem any less confused. “You—what?”\n\n\n\n\n“Is my special night, Hollander. I want to watch you.”\n\n\n\n\nBlush spread across Hollander’s cheeks and down his neck to his chest. “I—I’ve never…”\n\n\n\n\nOf course he hadn’t, which is exactly why Ilya wanted him to now. For him. “I thought maybe not. So show me. How do you touch yourself, Shane Hollander?”\n\n\n\n\nFor a long, tense moment, both men were silent, their gazes locked. Ilya certainly wasn’t going to be the one to speak first. He took another sip of his drink, and waited.\n\n\n\n\n“Give me some of that vodka, then,” Hollander finally said. “I’m too sober for this.”\n\n\n\n\nIlya wanted to pump his fist in celebration, but he kept his cool. “No. The vodka you can have after. As reward.”\n\n\n\n\n“Fuck. You.”\n\n\n\n\nIlya was having a great time now. He’d forgotten how much fun it was with Hollander. “Is good vodka! Come on. Look at your poor dick, Hollander. Give him some attention, yes?”\n\n\n\n\nThe bulge in Hollander’s underwear was hard to ignore. As much as Hollander looked like he was going to punch Ilya, he must have been dying to touch himself\n\n\n\n\n“Close your eyes,” Ilya said encouragingly. “Pretend you are alone. How do you start?”\n\n\n\n\nFinally, slowly, Hollander brought his hand to his stomach. He kept his eyes closed as he dragged his fingers gently over his skin, barely touching. It was somehow sexier than anything Ilya had ever seen in his life. Hollander was nervous, but he was doing this. For Ilya.\n\n\n\n\nWhen Hollander finally pressed his hand to his erection, it was like a switch was flipped. The nerves disappeared, released with a filthy moan as Hollander began to show off. Ilya was mesmerized, impressed, and so turned on he was having a difficult time staying cool. He was leaning forward eagerly in his chair, and didn’t realize it until Hollander opened his eyes, catching him.\n\n\n\n\nIlya fought for control. “Come on, Hollander,” he managed to say. “Show me.”\n\n\n\n\nHollander slid his underwear down until it stretched across his enormous thighs. His cock was already dripping.\n\n\n\n\n“Stroke it,” Ilya heard himself saying. “Make yourself come for me.”\n\n\n\n\nHollander slowly spread a pearly drop of precome over the head of his cock, watching Ilya’s face the entire time. Ilya was going to have a heart attack.\n\n\n\n\n“There is lube in the drawer,” Ilya said, somewhat haltingly because he’d almost forgotten the English words “drawer,” “lube,” and “the.” He definitely wasn’t the one in charge anymore. “Beside the bed.”\n\n\n\n\nAs if to prove it, Hollander said, “Get it for me.”\n\n\n\n\nIlya got it for him. In an attempt to regain some control, Ilya childishly pulled the bottle away as Hollander reached for it. Then, he tossed it on the bed and delighted in watching Hollander angrily retrieve it.\n\n\n\n\nHe wanted more anger.\n\n\n\n\n“Would you like to know how it feels?” he asked as he sat back in his chair.\n\n\n\n\n“How what feels?”\n\n\n\n\n“The Cup. Do you want to know what it feels like to hold the Stanley Cup?”\n\n\n\n\nHollander’s eyes were furious. “Oh fuck you.”\n\n\n\n\nIlya laughed. “I cannot describe it anyway. Impossible.”\n\n\n\n\n“I’ll find out for myself soon enough.”\n\n\n\n\nIlya had no doubt. “Of course. Now, show me how you like it, Hollander.”\n\n\n\n\nHollander did. He pleasured himself shamelessly—eagerly—as if he was hoping for positive feedback when he was done. He was breathtakingly beautiful, and Ilya needed to be inside him. He couldn’t possibly just watch.\n\n\n\n\n“Open yourself up,” Ilya instructed. “Use your fingers.”\n\n\n\n\nHollander did. He poured lube over his fingers and began massaging his hole. Ilya’s cock was straining against his pants, and his mind was crumbling apart. “Yes,” he said. “Let me see you open yourself for me.”\n\n\n\n\nIt was an unnecessary instruction. Hollander already had a finger inside. “You gonna fuck me?”\n\n\n\n\nIlya might never stop fucking him. There was nothing ever in his life that he’d wanted more. “We’ll see,” he said, his voice remarkably steady. He sipped his vodka, hoping he wouldn’t give himself away.\n\n\n\n\nBut then Hollander broke him with a single word: “Please.”\n\n\n\n\nOh god. Hollander was begging. Ilya swallowed hard. “Please what?”\n\n\n\n\n“I—I need…”\n\n\n\n\nIlya wanted him to say it. He wanted him to tell Ilya to fuck him, to hold him, to stay with him. “What do you need, Hollander?”\n\n\n\n\n“You. Fuck me. Please.”\n\n\n\n\nThe “You” echoed in Ilya’s ears, pounding along with his blood as he stood. He began to undress, but only got as far as removing his shirt before Hollander—on all fours—was rubbing his face against Ilya’s crotch.\n\n\n\n\nEnglish left Ilya. Everything left Ilya except raging lust and something sharper and more painful that he needed to ignore. “Why does it have to be you?” he said aloud in Russian. “Why are you so perfect? It’s fucking awful.”\n\n\n\n\nHe was wondering if Hollander might have been sent as some sort of test from God, something Ilya was supposed to resist, when Hollander wrapped his lips around Ilya’s cock.\n\n\n\n\nSorry, God.\n\n\n\n\n“Fuck, Hollander,” Ilya moaned, finding his English again. “You love it.”\n\n\n\n\nHollander kept sucking, and Ilya enjoyed it for as long as he could. When he was dangerously close to coming, he pulled out and said, “Turn over.”\n\n\n\n\nIlya wasn’t even trying to be cool anymore, not when Hollander was presenting his ass so obediently. Ilya barely managed to get the condom and lube on before he sank into Hollander, fucking him with no finesse or patience at all. He jackhammered into him, mad at Hollander for existing, mad at himself for needing him. Hollander kept repeating “please,” and Ilya tried his best to give him everything he had.\n\n\n\n\nHis orgasm was violent and wonderful, and Ilya cried out as it ripped through him. He was dimly aware that Hollander had come too, and wished he could have seen it. He rested his forehead between Hollander’s shoulder blades, panting and breathing him in. Finally, he fell to the bed beside him.\n\n\n\n\n“Jesus, Hollander.”\n\n\n\n\nHollander looked wrecked, all flushed and glistening and messy. He smiled at Ilya and said, “How about that vodka?”\n\n\n\n\nIlya laughed, and his heart swelled. “Yes. Give me a minute.” He didn’t want to leave the bed, because when he did, this would be over. Hollander wouldn’t be smiling at him, gorgeous and spent. He’d get dressed, he’d leave. Ilya would be alone.\n\n\n\n\nHe let himself look at Hollander, trying to memorize every detail of that moment. He wanted to kiss him. He wanted to roll on top of him and kiss him until they both fell asleep. He wanted to kiss him in the morning, and all day tomorrow.\n\n\n\n\nIlya left the bed. He got cleaned up, and he brought a washcloth and a glass of vodka back to the bedroom for Hollander. He brought a cigarette and a lighter for himself. He wanted Hollander to be annoying about the cigarette, though Ilya knew it wouldn’t make him like Hollander less.\n\n\n\n\nHollander didn’t say anything about the cigarette, even when Ilya released long, obnoxious clouds of smoke over the bed they were both reclining on. Hollander quietly sipped his vodka while Ilya waited for the moment to crumble apart.\n\n\n\n\n“Are you heading back soon?” Hollander asked.\n\n\n\n\n“Back?”\n\n\n\n\n“To Russia. For the summer.”\n\n\n\n\nAh. There. Moment ruined. “Yes.”\n\n\n\n\n“Oh.”\n\n\n\n\nIlya was surprised when, after a moment, Hollander asked, “Why?”\n\n\n\n\nIrritated, Ilya gave a short answer. “It is home.”\n\n\n\n\n“But…do you like going there?”\n\n\n\n\nHollander may as well have stabbed Ilya in the gut. Ilya could practically feel the blade twisting, tearing up his insides. He hoped Hollander didn’t notice his shaking fingers as he brought the cigarette back to his lips. In that moment, Ilya wanted to tell Hollander everything. Instead, he closed his eyes and said, “I should sleep.”\n\n\n\n\n“Oh.” Hollander sounded disappointed. Or maybe just embarrassed. “Yeah. I should…I need to get going, anyway.”\n\n\n\n\nIlya kept his eyes closed so he wouldn’t need to watch him leave. “Yes.”\n\n\n\n\nHe heard Hollander moving around the hotel room, first in the bedroom, then in the main room, gathering his clothes. Ilya stayed on the bed.\n\n\n\n\n“See you,” Hollander said from the other room.\n\n\n\n\nIlya dropped his cigarette butt into Hollander’s not-empty vodka glass, watching the ash turn something pure and perfect into something dark and ugly. “Goodbye, Hollander.”",
+      "mediaUrl": ""
+    },
+    {
+      "title": "📝 ILYA'S MONOLOGUE",
+      "content": "Here's Ilya's monologue(English translated).\n\n\n\nIlya's monologue\n\nI never want to come back here again. I fucking hate it here. And they all fucking hate me.\n\nI pay for everything. I make sure everyone has clothes they like. I make sure the food is perfect, that father is buried next to his parents, that the tomb is perfect.\n\nAnd the only fucking-word I ever hear is: \"I want more, Ilya. I need more, Ilya, more, more, more!\" And I have nothing for these people! I give them everything... But I feel fucking empty.\n\nThey don't care.\n\nThey look at me and they see a bank. Or an enemy or I don't even know what. \n\nMy brother, he always hated me. And I know why, but... it kills me. And it kills me that he took care of my father and I didn’t, but I couldn't. I wasn't here.\n\nI still paid for all of it. And he will never forgive me. \n\nFor any of it. \n\nFor existing.\n\tAnd it means… I have no one now.\n\nWell. not no one. I have… Svetlana. She loves me, and I love her. But not like... \n\nFuck me, but not like I love you. That's the worst fucking part of all this is… that all I want is you.\n\nIt's always you.\n\nI'm so in love with you and I don't know what to do about it.\n\nOkay, I’m done.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784226132604",
+  "title": "The Long Game",
+  "author": "Rachel Reid",
+  "universe": "Game changers",
+  "vibes": [
+    "Romance",
+    "Sports",
+    "LGBTQ+"
+  ],
+  "rating": 5,
+  "coverUrl": "https://cdn.kobo.com/book-images/3db45125-36a3-4167-8c23-0f919c2cfec1/1200/1200/False/the-long-game-24.jpg",
+  "cardBg": "#ffffff",
+  "folder": "My summer read list",
+  "sections": [
+    {
+      "title": "💭 Thoughts & Commentary",
+      "content": "Type summary notes here...",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚 Highlight Metrics",
+      "content": "Track favorite tropes or green flags here...",
       "mediaUrl": ""
     }
   ]
 },
             {
-                id: "book-1",
-                title: "The Love Hypothesis",
-                author: "Ali Hazelwood",
-                vibes: ["Romance"],
-                universe: "STEMist",
-                rating: 4,
-                coverUrl: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1611937942i/56732449.jpg",
-                cardBg: "#fff0f5",
-                sections: [
-                    { title: "💭 Thoughts & Commentary", content: "Honestly, this book is a total comfort read. The fake dating trope is handled with absolute chef's kiss efficiency.", mediaUrl: "" },
-                    { title: "📝 Quotes", content: "• \"I'm starting to think that maybe I don't need a hypothesis. Maybe I can just love you.\"", mediaUrl: "" }
+                "id": "book-1783679296846",
+                "title": "The Deal",
+                "author": "Elle Kennedy",
+                "universe": "Off campus",
+                "vibes": ["Romance","Sports"],
+                "rating": 5,
+                "folder": "My summer read list",
+                "coverUrl": "https://cdn.kobo.com/book-images/2d93e077-8524-4358-b0cd-34a1ef1a56bc/1200/1200/False/the-deal-96.jpg",
+                "cardBg": "#ffffff",
+                "sections": [
+                    { "title": "💭 SUMMARY",
+                      "content": "Fake dating to a real couple.\n\n\n\n\nHannah Wells, a smart, confident music major college student, agrees to tutor Garrett Graham, star hockey player in Briar University, in ethics. In exchange, Garrett pretends to date her to make her crush Jutin jealous. As the fake romance sparks real feelings, Hannah struggles with her childhood trauma, Garrett deals with the pressure of his father. Both must overcome their personal traumas to find love.",
+                      "mediaUrl": ""
+                    },
+                    {
+                      "title": "💚 WHAT MAKES GARRETT GRAHAM A GREEN FLAG",
+                      "content": "Reasons why think that Garrett is a green flag are:\n\nAfter Hannah told him that “her friend had a bad experience with drinking” so that’s why she doesn't drink in public, he honestly doesn't understand guys who would do that to a woman.\n\nHe once said ”You don’t hit on another man’s date. Period. That’s a dick move.”\n\nHe promised Hannah to look out for her at the party, he wanted to help her see that it’s ok to let down her guard sometimes. He actually did. \n\nHe glued to Hannah’s side all night, guarding her drinks, waiting outside the bathroom for her, and making sure Hannah doesn't get harassed by his friends or the locals they’ve met.\n\nHe chose to stay sober and let Hannah have fun and get drunk, he will make sure that Hannah is safe. The point is, seeing Hannah happy makes him happy. \n\nHe didn’t do it with Hannah when she was drunk, even Hannah told him she wants him so bad herself, because he promised Hannah to look out for her.\n\nHe knows losing virginity is a huge deal for some girls.\n\nEven if he wanted to attack his father so badly, he will not do it. Because he will never lower himself to his father’s level, he will never lose control of his temper and be like him.",
+                      "mediaUrl": ""
+                    },
+                    {
+                      "title": "📝MY FAV SENTENCES & SENCES",
+                      "content": "\"Fear is a fact of life. Don't let it get you down Wellsy. Everyone experiences it.\"-Garrett Graham\n\n\n\n\n“We want to be fashionably late, not asshole late.”- Garrett Graham\n\n\n\n\n“To help you see that it’s ok to let down your guard sometimes. Look, I’m the DD tonight, I’m offering to be more than just your driver. I’ll be your bodyguard, and your bartender, and most importantly, your friend. I promise to look out for you tonight, Welly.”- Garrett Graham\n\n\n\n\n“I know that your friend had a bad experience with drinking in public, but I promise, I’d never let that happen to you.”- Garrett Graham\n\n\n\n\n“Hey, come on, don’t cry. It breaks my fucking heart to hear you cry.”- Garrett Graham\n\n\n\n\n“You’re not broken, baby, I promise.”- Garrett Graham\n\n\n\n\n“Sometimes people sneak up on you and suddenly you don't know how you ever lived without them. How you went about your they and hung out with your friends and fucked other people without having this one important person in your life.”- Garrett Graham\n\n\n\n\nGarrett : How did I go so long without noticing you, damn it? Why did it take seeing a stupid A on your midterm to make me notice?\n\nHannah: It doesn’t matter. You know me now.\n\n\n\n\n“I’m hot for you, Garrett. Only you.”- Hannah Wells\n\n\n\n\n“Baby, I could watch you watching paint dry, and I still wouldn’t be bored.”- Hannah Wells\n\n“I can’t imagine ever giving up my job because the man in my life misses me too much when I’m at work. To me, that’s a red flag if I ever saw one.”- Hannah Wells\n\n\n\n\n“Living well and being happy is how we get over the shit in our past.”- Hannah Wells",
+                      "mediaUrl": ""
+                    }
+                ]
+            },
+            {
+                "id": "book-1783713903099",
+                "title": "The Mistake",
+                "author": "Elle Kennedy",
+                "universe": "Off campus",
+                "vibes": ["Romance","Sports"],
+                "rating": 5,
+                "folder": "My summer read list",
+                "coverUrl": "https://m.media-amazon.com/images/I/811M8UKz6cL._AC_UF1000,1000_QL80_.jpg",
+                "cardBg": "#ffffff",
+                "sections": [
+                    { "title": "💭SUMMARY", "content": "John Logan, a charming, popular hockey player in Briar University, who hooks up with freshman Grace Ivers to distract himself from a secret crush of his best friend’s girlfriend—Hannah Wells. After Grace discovers she is his second choice and cuts him off, Logan realizes he genuinely loves her and must work to win her back. When Grace returns from summer break with newfound confidence, the”Sophomore Grace”.  She makes Logan complete a series of tasks to prove his devotion. Ultimately, Logan faces his family struggles, Grace finds her voice, and the two build a healthy, mutual relationship. ", "mediaUrl": "" },
+                    { "title": "💚 CHARACTER DEEP DIVE", "content": "I think John Logan is THE MAN. He possessed an unwavering determination. By tackling a list of demands that Grace gave him, even it seems impossible to accomplish. He proved he wasn’t just chasing her, his relentless effort was a deeply earnest apology.\n\nJohn’s dad has an addiction to alcohol, John and his brother Jeff have to clean up the mess he made. Sometimes John hates him so much, or even wishes he’d die. But John would never abandon his dad, because if he did, he thinks he’s no better than his dad is. He treated his dad the way he’d want to be treated if he was ever in his dad’s position. Even to give up his dream— hockey.\n\n\n\n\nGrace Ivers, she found her own compass. She was finally unbeholden to her “ex bestfriend” Ramona's opinions. She’s no longer the “freshman Grace”, she is the “sophomore Grace”.\n\nAlso, she showed how gracious she had become. She didn’t let the hurt harden her heart, she bounced back without carrying grudges.", "mediaUrl": "" },
+                    { "title": "📝 FAV SENTENCES&SCENES:", "content": "“Don’t waste your time obsessing over stupid actions of stupid people”- John Logan\n\n\n\n\n“Seriously, Grace, don’t stress. You know what they say—haters be hating, and bitches be bitching.”- John Logan\n\n\n\n\n“First and foremost—be confident. Second—be spontaneous. Third—the only opinion that matters is your own.”- Josie Ivers\n\n\n\n\n“I’m not sure. We don’t know each other very well, but everything I do know about you, I like. And everything I don’t know, I want to find out.”- John Logan\n\n\n\n\n“Both of my parents drilled the importance of forgiveness into me, of expelling the bitterness and anger instead of letting those negative emotions consume me.”- Grace Ivers\n\n\n\n\n\"That's the other reason I’m doing this. Because of the example he set. If I abandon him, then I’m no better than he is. Then I’m selfish, and that’s something I never want to be. Sometimes I even hate him so much I want to kick his teeth in, sometimes I even find myself wishing he’d die, but no matter how frustrating it gets, he’s still my father, and I love him.”- John Logan\n\n\n\n\n“I treat him the way I’d want to be treated if I was ever in his position. With patience and support, even when he doesn’t deserve it.”- John Logan\n\n\n\n\n“Hannah was trying to describe love to me last semester. She said it feels like your heart is about to overflow, and that when you love someone, you need them more than anything else in the world, more than food or water or air.”- John Logan", "mediaUrl": "" }
+                ] 
+            },
+            {
+  "id": "media-1784197376275",
+  "title": "The Duke and I",
+  "author": "Julia Quinn",
+  "universe": "Bridgerton",
+  "vibes": [
+    "Romance"
+  ],
+  "rating": 4,
+  "coverUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREez2RKjw28TWHcc4_1m6nBSq5pvXb0PhXLgBQpk9ENyU-S_s3Nc2Fsb0&s=10",
+  "cardBg": "#ffffff",
+  "folder": "My summer read list",
+  "sections": [
+    {
+      "title": "💭 SUMMARY",
+      "content": "Daphne Bridgerton, the eldest dauther of the Bridgerton family, and Simon Basset, the Duke of Hastings, as they enter a fake courtship to solve their respective social dilemmas. Daphne seeks to attract suitors, while Simon evades matchmaking mothers. Ultimately, they have to overcome Simon's traumatic past, and find true happiness together.",
+      "mediaUrl": ""
+    }
+  ]
+},
+            {
+                "id": "book-1",
+                "title": "The Love Hypothesis",
+                "author": "Ali Hazelwood",
+                "universe": "STEMist",
+                "vibes": ["Romance"],
+                "rating": 4,
+                "folder": "My summer read list",
+                "coverUrl": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1611937942i/56732449.jpg",
+                "cardBg": "#fff0f5",
+                "sections": [
+                    { "title": "💭 Thoughts & Commentary", "content": "Honestly, this book is a total comfort read. The fake dating trope is handled with absolute chef's kiss efficiency.", "mediaUrl": "" }
                 ]
             }
         ];
 
+        const DEFAULT_MOVIE_VIBES = ["Romance", "Drama", "Y2K Retro", "Teen", "Fantasy", "Comedy","Action", "Sports", "LGBTQ+", "Horror", "Crime"];
+        const DEFAULT_MOVIES = [
+            {
+  "id": "media-1784026019490",
+  "title": "Heated Rivalry",
+  "author": "Jacob Tierney / HBO Max",
+  "universe": "Heated Rivalry",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Sports",
+    "LGBTQ+"
+  ],
+  "rating": 5,
+  "coverUrl": "https://m.media-amazon.com/images/M/MV5BYzYwNTk5ODYtOGVmYS00Zjc4LTk5ZDYtMTM4ODQyN2Q0MTVkXkEyXkFqcGc@._V1_QL75_UY281_CR19,0,190,281_.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "A romance set in the world of hockey; Shane Hollander and Ilya Rozanov are two stars in Major League Hockey, bound by ambition, rivalry, and a magnetic pull neither of them fully understands.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚BASED ON BOOK",
+      "content": "Based on \"Game Changers\" series by Rachel Reid.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784034544678",
+  "title": "Red White & Royal Blue",
+  "author": "Matthew Lopez / Prime Video",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Comedy",
+    "LGBTQ+"
+  ],
+  "rating": 5,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/3/3d/Red_white_and_royal_blue_film.png",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Alex Claremont-Diaz, the first son of the United States, and young Prince Henry fall in love. However, considering their high-profile public lives, they must keep their relationship a secret at all costs.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784196162922",
+  "title": "Ginny & Georgia",
+  "author": "Netflix",
+  "universe": "",
+  "vibes": [
+    "Drama",
+    "Comedy"
+  ],
+  "rating": 5,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/thumb/d/d1/Ginny_%26_Georgia_Season_3.jpg/250px-Ginny_%26_Georgia_Season_3.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Teenage Ginny and her family yearn to put down roots in a picturesque New England town after years on the run.",
+      "mediaUrl": ""
+    }
+  ]
+},
+            {
+  "id": "media-1784023137718",
+  "title": "Off campus",
+  "author": "Prime Video",
+  "universe": "Off campus",
+  "vibes": [
+    "Romance",
+    "Drama"
+  ],
+  "rating": 5,
+  "coverUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcohA_YejPXKUwfneeh-WFDK2HHEVESy629_XXKyvCV8qxHJeNaIpEQYU&s=10",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Hannah Wells(a music major student) agrees to tutor Garrett Graham(the star hockey player in Briar U) in philosophy so he can keep his grades up and stay on the elite ice hockey team. In exchange, Garrett fakes being Hannah's boyfriend in an attempt to make her crush, a fellow musician Justin Kohl, jealous. Over the course of their arrangement, the two realize their fake romance is turning into a genuine, intense connection.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚 BASED IN BOOK",
+      "content": "Based on \"Off-Campus\" series, The Deal, by Elle Kennedy. ",
+      "mediaUrl": ""
+    }
+  ]
+},
+            {
+  "id": "media-1784022712492",
+  "title": "Every Year After",
+  "author": "Prime Video",
+  "universe": "",
+  "vibes": [
+    "Romance"
+  ],
+  "rating": 4,
+  "coverUrl": "https://resizing.flixster.com/lNKNoB_1oRXfoBEOOCYsIPP3ZBk=/fit-in/705x460/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p33011099_b_v12_af.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Told across alternating timelines, their story begins over six summers in Barry's Bay, where they go from childhood best friends to first loves before a devastating betrayal pulls them apart.\n\n\n\n\nPersephone \"Percy\" Fraser and Sam Florek. A decade after their breakup, Percy returns to Barry’s Bay, following the death of Sam's mother, Sue. Throughout her return to the town, she fights with guilt and tries to reconnect with Sam….\n\n\n",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚 BASED ON BOOK",
+      "content": "Based on \"Every Summer After\" by Carley Fortune.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784194096219",
+  "title": "The Idea of You",
+  "author": "Michael Showalter / Prime Vdeo",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Comedy"
+  ],
+  "rating": 4,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/f/f7/The_Idea_of_You_film_poster.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "On the cusp of beginning a new life to focus on herself, single mother Solene finds herself unexpectedly falling for Hayes Campbell, a young singer.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚 BASED ON BOOK",
+      "content": "Based on the novel \"The Idea of You\" by Robinne Lee.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784195450087",
+  "title": "My Oxford Year",
+  "author": "Iain Morris / Netflix",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Comedy"
+  ],
+  "rating": 3,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/1/15/My_Oxford_Year_poster.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "An ambitious American student travels to Oxford in England to fulfill her dream, but encounters a charming local who changes both their lives.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚 BASED ON BOOK",
+      "content": "Based on the novel \"My Oxford Year\" by Julia Whelan.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784054545951",
+  "title": "After",
+  "author": "Jenny Gage / Netflix",
+  "universe": "After",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Teen"
+  ],
+  "rating": 4,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/6/62/After_2019_film.png",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Tessa, a young student and devoted girlfriend, looks forward to greater prospects in college. However, she soon meets Hardin, an enigmatic rebel who makes her question her notions of life and love.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "📝 BASED ON BOOK",
+      "content": "Based on bestselling series  \"After\" by Anna Todd.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784054747390",
+  "title": "After We Collided",
+  "author": "Roger Kimble / Netflix",
+  "universe": "After",
+  "vibes": [
+    "Romance",
+    "Drama"
+  ],
+  "rating": 4,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/7/77/After_We_Collided_poster.png",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Tessa breaks up with Hardin and begins working as an intern. Her life, however, gets even more dramatic as her co-worker gets attracted to her, while Hardin tries to fix their relationship.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚 BASED ON BOOK",
+      "content": "Based on bestselling series  \"After\" by Anna Todd.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784055071952",
+  "title": "After We Fell",
+  "author": "Castille Landon / Netflix",
+  "universe": "After",
+  "vibes": [
+    "Romance",
+    "Drama"
+  ],
+  "rating": 4,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/4/47/After_We_Fell_film_poster.png",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "The future of Tessa and Hardin's passionate love is challenged when their ambitions and promises fail to align with their raging emotions.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚BASED ON BOOK",
+      "content": "Based on bestselling series  \"After\" by Anna Todd.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784055387221",
+  "title": "After Ever Happy",
+  "author": "Castille Landon / Netflix",
+  "universe": "After",
+  "vibes": [
+    "Romance",
+    "Drama"
+  ],
+  "rating": 4,
+  "coverUrl": "https://play-lh.googleusercontent.com/iTxl4Mu4S2oTmIMHlK-P4xi6KsslHvuYikHg8PJ8eefv6t-xugizYYLTwBzOVPzXgekLQkaDhMDIWj_uWiA",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMARRY",
+      "content": "As a shocking truth about a couple's families emerges, the two lovers discover they are not so different from each other. Tessa is no longer the sweet, simple girl she was when she met Hardin.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚BASED ON BOOK",
+      "content": "Based on bestselling series  \"After\" by Anna Todd.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784055701761",
+  "title": "After Everything",
+  "author": "Castille Landon / Netflix",
+  "universe": "After",
+  "vibes": [
+    "Romance",
+    "Drama"
+  ],
+  "rating": 4,
+  "coverUrl": "https://a.ltrbxd.com/resized/film-poster/7/3/6/9/6/1/736961-after-everything-0-600-0-900-crop.jpg?v=4022f89ac5",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Author Hardin Scott is in a downward spiral after being dumped by Tessa, the love of his life. On the suggestion of his mother, Hardin attempts to move on by making amends for his past behaviour.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚BASED ON BOOK",
+      "content": "Based on bestselling series  \"After\" by Anna Todd.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784195615445",
+  "title": "My Life with the Walter Boys",
+  "author": "Netflix",
+  "universe": "",
+  "vibes": [
+    "Romance"
+  ],
+  "rating": 2,
+  "coverUrl": "https://m.media-amazon.com/images/M/MV5BYjdmN2FmMWUtZmYxOC00OGY5LTk5NjgtYjViNjYyZDc1YWU3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "When a tragedy disrupts her life, a teenager moves in with her guardian's big family in a small town and learns lessons about love, hope and friendship.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚 BASED ON BOOK",
+      "content": "An adaptation of the novel \"My Life with the Walter Boys\" by Ali Novak.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784196359908",
+  "title": "Never Have I Ever",
+  "author": "Netflix",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Comedy"
+  ],
+  "rating": 3,
+  "coverUrl": "https://m.media-amazon.com/images/M/MV5BNzdhOGVjMTQtOTQ0Yi00ZWNjLTk2MjMtMWMzODczNWNiNmM3XkEyXkFqcGc@._V1_.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "After a traumatic year, a first-generation Indian-American teenager wants to improve her status at school, but friends, family, and feelings don't make it easy on her.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784196512028",
+  "title": "Heartbreak High",
+  "author": "Netflix",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Comedy"
+  ],
+  "rating": 2,
+  "coverUrl": "https://m.media-amazon.com/images/M/MV5BN2RhZjJiYTEtMDczMS00NzhhLThhMTktODhmNWQ2OTNhN2RjXkEyXkFqcGc@._V1_.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Amerie, along with her new friends Quinni and Darren, must navigate love, sex and heartbreak at Hartley High.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784196647642",
+  "title": "Euphoria",
+  "author": "HBO Max",
+  "universe": "",
+  "vibes": [
+    "Drama",
+    "Teen"
+  ],
+  "rating": 3,
+  "coverUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSv6GngVhGADPRfCoVsO6DH0ikoVtpakL2dyD5bZdxaMg&s",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "A group of high school students struggle with drugs, love, social media and money as they come of age while trying to establish their identity.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784035385749",
+  "title": "The School for Good and Evil",
+  "author": "Paul Feig / Netflix",
+  "universe": "",
+  "vibes": [
+    "Drama",
+    "Fantasy",
+    "Action",
+    "Comedy"
+  ],
+  "rating": 3,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/c/c5/The_School_for_Good_and_Evil_movie_poster.jpeg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Best friends Sophie and Agatha find themselves on opposing sides of an epic battle when they're swept away into an enchanted school where aspiring heroes and villains are trained to protect the balance between good and evil.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "📝 BASED ON BOOK",
+      "content": "Based on novel \"The School for Good and Evil\" by Soman Chainani.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784035008238",
+  "title": "Crossroads",
+  "author": "Tamra Devis",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Y2K Retro",
+    "Teen",
+    "Comedy"
+  ],
+  "rating": 3,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/2/22/Crossroads_poster.JPG",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Three childhood friends, reunite on graduation and promptly decide to take a trip across the country. But, what happens when their trip to rekindle their friendship is interrupted by a baleful guy?",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784054085115",
+  "title": "The House Bunny",
+  "author": "Fred Wilf / Netflix",
+  "universe": "",
+  "vibes": [
+    "Y2K Retro",
+    "Teen",
+    "Comedy"
+  ],
+  "rating": 3,
+  "coverUrl": "https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p175518_p_v10_aa.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Shelley, a Playboy Playmate, is thrown out of the mansion as she is too old to be there. She finds residence in a place where she has to teach an awkward sorority about the opposite sex.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784056479069",
+  "title": "He's Just Not That Into You",
+  "author": "Ken Kwapis / Netflix",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Y2K Retro",
+    "Comedy"
+  ],
+  "rating": 5,
+  "coverUrl": "https://i.ebayimg.com/images/g/gjYAAeSw5FZonR0J/s-l400.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "A group of people living in Baltimore struggle to figure out their love lives. Each of them tries to deal with the complexities of relationships while misinterpreting the behaviour of their partners.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784056720131",
+  "title": "27 Dresses",
+  "author": "Anne Fletcher / Netflix",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Y2K Retro",
+    "Comedy"
+  ],
+  "rating": 5,
+  "coverUrl": "https://m.media-amazon.com/images/M/MV5BZWM3ZjRiNGUtNmZkMy00YWNkLWI5MGUtYWI1NTc5NGVkODJkXkEyXkFqcGc@._V1_.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "After serving as a bridesmaid 27 times, Jane is shocked when her younger sister announces her engagement to the man she loves. Meanwhile, she also meets a cynical journalist who has a hidden agenda.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784057424373",
+  "title": "The Proposal",
+  "author": "Anne Fletcher / Disney+",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Y2K Retro",
+    "Comedy"
+  ],
+  "rating": 3,
+  "coverUrl": "https://m.media-amazon.com/images/M/MV5BYWU3ZmFhYTktNzU4NS00ZTEyLTkwNTYtMWE1M2JjMTFmODVkXkEyXkFqcGc@._V1_QL75_UY281_CR0,0,190,281_.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "In order to avoid deportation to Canada, Margaret, the editor of a publishing firm, convinces her assistant Andrew to marry her. However, a trip to Andrew's hometown leads to unexpected consequences.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784057112268",
+  "title": "Finding Her Edge",
+  "author": "Netflix",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Sports"
+  ],
+  "rating": 3,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/b/bf/Finding_Her_Edge_poster.jpeg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Three sisters navigate the pressures of their family's figure skating legacy; Adriana, trains with new partner Brayden while still loving ex-partner Freddie; a fake romance with Brayden for sponsorship adds to her challenges.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "📝 BASED ON BOOK",
+      "content": "Based on novel \"Finding Her Edge\" by Jennifer Iacopelli.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784226412199",
+  "title": "Bridgerton",
+  "author": "Netflix",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Teen"
+  ],
+  "rating": 4,
+  "coverUrl": "https://m.media-amazon.com/images/M/MV5BNmY4MDAyNjgtZTBkYi00MTY5LWIwOTctZjY1MGQ0MDM5NTU3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "During the Regency era in England, eight close-knit siblings of the powerful Bridgerton family attempt to find love.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚 BASED ON BOOK",
+      "content": "Based on the book series \"Bridgerton\" by Julia Quinn.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784195115143",
+  "title": "Love Me Love Me",
+  "author": "Roger Kumble / Prime Video",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Teen"
+  ],
+  "rating": 2,
+  "coverUrl": "https://m.media-amazon.com/images/M/MV5BMjRlN2RkMWUtMjJjNi00ZTM5LTkxYjItYzE3Yjg5YjIwOTEyXkEyXkFqcGc@._V1_.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "After her brother's death, June starts fresh at an Italian elite school. Caught between James, a troubled fighter, and his friend Will, a model student, she learns everyone has secrets as hidden truths emerge.",
+      "mediaUrl": ""
+    },
+    {
+      "title": "💚 BASED ON BOOK",
+      "content": "Based on the book \"Love Me Love Me\" by Stefania S. ",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784023913998",
+  "title": "40 Dates And 40 Nights",
+  "author": "Andy Delaney",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Comedy"
+  ],
+  "rating": 4,
+  "coverUrl": "https://m.media-amazon.com/images/M/MV5BYTkwY2YxOTItN2EyYi00Yjc3LTlmYTYtZWY0Y2M1MGQyZjdhXkEyXkFqcGc@._V1_.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Burned out on dating and ready to quit, Leah accepts her eccentric grandmother's outrageous challenge to go on 40 dates in 40 nights in exchange for a full year's worth of rent. From awkward dinners to unexpected sparks, she soon discovers the biggest obstacle to love might just be herself.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784056188429",
+  "title": "Voicemails for Isabelle",
+  "author": "Leah McKendrick / Netflix",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Comedy"
+  ],
+  "rating": 5,
+  "coverUrl": "https://m.media-amazon.com/images/M/MV5BMTE3MmE2MTYtMjA4OC00ZTIxLWFlNWYtZjk4ZTBkZDdiYzU0XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Jill leaves voice messages to her deceased sister telling her about her chaotic life in San Francisco. Unwittingly, a mysterious Austin real estate agent begins to receive their confessions.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784057657563",
+  "title": "While You Were Sleeping",
+  "author": "Jon Turteltaub / Disney+",
+  "universe": "",
+  "vibes": [
+    "Romance",
+    "Drama",
+    "Comedy"
+  ],
+  "rating": 3,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/e/e6/Whilesleepingposter.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "When Lucy, a token collector, saves passenger Peter's life, she is mistaken for his fiancee by his family. While Peter is in a coma, things complicate as Lucy begins to fall in love with his brother.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784193510303",
+  "title": "Jennifer's Body",
+  "author": "Karyn Kusama / Netflix, Disney+",
+  "universe": "",
+  "vibes": [
+    "Comedy",
+    "Horror"
+  ],
+  "rating": 3,
+  "coverUrl": "https://m.media-amazon.com/images/S/pv-target-images/68c054ad4f0e6af8956e4bf52c5676923bdd4aae413a785ac7d56b7677122d93.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Jennifer becomes possessed and turns into a succubus after she is sacrificed to Satan. When her best friend Anita learns about it, she has to stop Jennifer before she attacks her lover Chip.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784193895948",
+  "title": "The Hustle",
+  "author": "Chris Addison / Netflix",
+  "universe": "",
+  "vibes": [
+    "Comedy",
+    "Crime"
+  ],
+  "rating": 4,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/3/3a/The_Hustle_film_poster.png",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "Two crooks who come from very different backgrounds meet on their way to the French Riviera and decide to join forces and swindle Thomas Westerburg, a billionaire.",
+      "mediaUrl": ""
+    }
+  ]
+},
+{
+  "id": "media-1784194371104",
+  "title": "Dirty Dancing",
+  "author": "Emile Ardolino",
+  "universe": "",
+  "vibes": [
+    "Romance"
+  ],
+  "rating": 4,
+  "coverUrl": "https://upload.wikimedia.org/wikipedia/en/thumb/0/00/Dirty_Dancing.jpg/250px-Dirty_Dancing.jpg",
+  "cardBg": "#ffffff",
+  "folder": "Summer watch list",
+  "sections": [
+    {
+      "title": "💭 MOVIE SUMMARY",
+      "content": "While holidaying with her parents at a resort, Frances is smitten with the resort's rebellious dance instructor. However, her father opposes the relationship, creating ripples in her family.",
+      "mediaUrl": ""
+    }
+  ]
+}
+        ];
+
+        let currentView = "books"; 
         let books = [];
         let vibes = [];
-        let universes = ["all"]; 
+        let universes = ["all"]; // Series tracking array cached nodes
         let activeBookId = "";
         let activeVibeIndex = 0; 
         let activeFilterGenre = "all";
-        let activeFilterUniverse = "all";
+        let activeFilterUniverse = "all"; // Active series subfilter selection tracking parameter
+        let activeFolderFilter = ""; 
         let isVaultEditing = false;
         let selectedModalRating = 5;
 
         window.addEventListener('DOMContentLoaded', () => {
-            // FIX: Force reset local parameters to prioritize master hardcoded values
-            vibes = [...DEFAULT_VIBES];
-            books = JSON.parse(JSON.stringify(DEFAULT_BOOKS));
-            saveBooksToStorage();
-            saveVibesToStorage();
+            localStorage.removeItem('review_vault_books');
+            localStorage.removeItem('review_vault_movies');
+            
+            // Build dynamic extra sub-container areas for series filters inside the existing vibes section
+            const consolePanel = document.getElementById('filterConsolePanel');
+            if (consolePanel) {
+                const subRow = document.createElement('div');
+                subRow.className = "flex flex-wrap items-center gap-2 pt-1 border-t border-dashed border-pink-200/60 mt-1";
+                subRow.innerHTML = `<span class="text-xs font-black text-purple-700 uppercase tracking-wider">SERIES:</span><div id="universeFilterContainer" class="flex flex-wrap items-center gap-2"></div>`;
+                consolePanel.appendChild(subRow);
+            }
+            
+            // Add a dynamic "+ CREATE FOLDER" option directly into the directory container area row
+            const directoryBar = document.getElementById('folderContainer');
+            if (directoryBar) {
+                const addFolderBtn = document.createElement('button');
+                addFolderBtn.onclick = createNewFolderPrompt;
+                addFolderBtn.className = "admin-element hidden ml-2 px-3 py-1.5 bg-yellow-200 hover:bg-yellow-300 text-black text-xs font-black rounded-lg border-2 border-black border-dashed transition";
+                addFolderBtn.innerHTML = `<i class="fa-solid fa-folder-plus mr-1"></i> CREATE FOLDER`;
+                directoryBar.parentNode.insertBefore(addFolderBtn, directoryBar);
+            }
 
-            if (books.length > 0) activeBookId = books[0].id;
-
+            loadViewDataEngine();
+            
             const savedTitle = localStorage.getItem('review_vault_title');
             if (savedTitle) document.getElementById('shelf-title').innerText = savedTitle;
             const savedSubtitle = localStorage.getItem('review_vault_subtitle');
@@ -494,22 +1368,77 @@
 
             document.getElementById('shelf-title').addEventListener('blur', () => {
                 localStorage.setItem('review_vault_title', document.getElementById('shelf-title').innerText);
-                showToast("Shelf Title Updated! ✨");
+                showToast("Vault Title Updated! ✨");
             });
             document.getElementById('shelf-subtitle').addEventListener('blur', () => {
                 localStorage.setItem('review_vault_subtitle', document.getElementById('shelf-subtitle').innerText);
                 showToast("Subtitle Updated! 🌸");
             });
+        });
+
+        function loadViewDataEngine() {
+            activeFilterGenre = "all";
+            activeFilterUniverse = "all";
+            activeFolderFilter = ""; 
+            
+            if (currentView === "books") {
+                vibes = [...DEFAULT_BOOK_VIBES];
+                books = JSON.parse(JSON.stringify(DEFAULT_BOOKS));
+                document.getElementById('searchInput').placeholder = "Search directory content...";
+                document.getElementById('admin-add-text').innerText = "ADD BOOK";
+            } else {
+                vibes = [...DEFAULT_MOVIE_VIBES];
+                books = JSON.parse(JSON.stringify(DEFAULT_MOVIES));
+                document.getElementById('searchInput').placeholder = "Search directory content...";
+                document.getElementById('admin-add-text').innerText = "ADD MOVIE";
+            }
+
+            saveActiveDataToStorage();
+
+            if (books.length > 0) {
+                activeBookId = books[0].id;
+            } else {
+                activeBookId = "";
+            }
 
             rebuildUniversesCache();
             renderVibesFilterBar();
             renderUniverseFilterBar();
-            renderBookshelf();
-            if (activeBookId) selectBook(activeBookId);
-        });
+            renderMediaGrid();
+            if (activeBookId) {
+                selectMediaItem(activeBookId);
+            } else {
+                clearBinderDisplay();
+            }
+        }
 
-        function saveBooksToStorage() { localStorage.setItem('review_vault_books', JSON.stringify(books)); }
-        function saveVibesToStorage() { localStorage.setItem('review_vault_vibes', JSON.stringify(vibes)); }
+        function saveActiveDataToStorage() {
+            if (currentView === "books") {
+                localStorage.setItem('review_vault_books', JSON.stringify(books));
+            } else {
+                localStorage.setItem('review_vault_movies', JSON.stringify(books));
+            }
+        }
+
+        function switchView(target) {
+            if (currentView === target) return;
+            currentView = target;
+
+            const booksBtn = document.getElementById('nav-books-btn');
+            const moviesBtn = document.getElementById('nav-movies-btn');
+
+            if (currentView === "books") {
+                booksBtn.className = "w-full py-3 border-2 border-black rounded-lg font-black text-sm tracking-wide transition-all bg-black text-white shadow-inner flex items-center justify-center space-x-2";
+                moviesBtn.className = "w-full py-3 border-2 border-black rounded-lg font-black text-sm tracking-wide transition-all bg-purple-50 hover:bg-purple-100 text-purple-900 border-dashed flex items-center justify-center space-x-2";
+            } else {
+                moviesBtn.className = "w-full py-3 border-2 border-black rounded-lg font-black text-sm tracking-wide transition-all bg-black text-white shadow-inner flex items-center justify-center space-x-2";
+                booksBtn.className = "w-full py-3 border-2 border-black rounded-lg font-black text-sm tracking-wide transition-all bg-pink-50 hover:bg-pink-100 text-pink-900 border-dashed flex items-center justify-center space-x-2";
+            }
+
+            if (isVaultEditing) toggleEditVault();
+            loadViewDataEngine();
+            showToast(`Switched directory to ${currentView.toUpperCase()} list! 🎬✨`);
+        }
 
         function rebuildUniversesCache() {
             universes = ["all"];
@@ -527,7 +1456,7 @@
             container.innerHTML = '';
 
             const allBtn = document.createElement('button');
-            allBtn.onclick = () => { activeFilterGenre = 'all'; renderVibesFilterBar(); renderBookshelf(); };
+            allBtn.onclick = () => { activeFilterGenre = 'all'; renderVibesFilterBar(); renderMediaGrid(); };
             allBtn.className = `px-3 py-1 text-xs font-bold rounded-full border border-2 border-black transition ${activeFilterGenre === 'all' ? 'bg-black text-white' : 'bg-white text-black'}`;
             allBtn.innerText = "All";
             container.appendChild(allBtn);
@@ -537,14 +1466,14 @@
                 btnWrapper.className = "relative inline-flex items-center group";
 
                 const mainBtn = document.createElement('button');
-                mainBtn.onclick = () => { activeFilterGenre = vibe; renderVibesFilterBar(); renderBookshelf(); };
+                mainBtn.onclick = () => { activeFilterGenre = vibe; renderVibesFilterBar(); renderMediaGrid(); };
                 mainBtn.className = `px-3 py-1 text-xs font-bold border border-2 border-black rounded-full transition ${activeFilterGenre === vibe ? 'bg-black text-white' : 'bg-white text-black'}`;
                 mainBtn.innerText = vibe;
 
                 const delToken = document.createElement('button');
                 delToken.onclick = (e) => { e.stopPropagation(); deleteVibeToken(vibe); };
                 delToken.className = "admin-element hidden absolute -top-2 -right-1 bg-red-500 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center text-[8px] font-black border border-black";
-                delToken.innerHTML = "&times;";
+                delToken.innerHTML = "×";
 
                 btnWrapper.appendChild(mainBtn);
                 btnWrapper.appendChild(delToken);
@@ -571,7 +1500,7 @@
 
             universes.forEach(uni => {
                 const btn = document.createElement('button');
-                btn.onclick = () => { activeFilterUniverse = uni; renderUniverseFilterBar(); renderBookshelf(); };
+                btn.onclick = () => { activeFilterUniverse = uni; renderUniverseFilterBar(); renderMediaGrid(); };
                 btn.className = `px-3 py-0.5 text-xs font-semibold rounded-full border-2 border-black transition ${activeFilterUniverse === uni ? 'bg-purple-600 text-white shadow-inner' : 'bg-purple-50 text-purple-900 hover:bg-purple-100'}`;
                 btn.innerText = uni === 'all' ? "All Series" : uni;
                 container.appendChild(btn);
@@ -584,7 +1513,6 @@
             const cleaned = name.trim();
             if (vibes.includes(cleaned)) { showToast("Vibe already exists!"); return; }
             vibes.push(cleaned);
-            saveVibesToStorage();
             renderVibesFilterBar();
             showToast(`Added: ${cleaned} 🎉`);
         }
@@ -592,59 +1520,113 @@
         function deleteVibeToken(vibeName) {
             if (!confirm(`Delete vibe tag '${vibeName}'?`)) return;
             vibes = vibes.filter(v => v !== vibeName);
-            saveVibesToStorage();
             if (activeFilterGenre === vibeName) activeFilterGenre = "all";
             renderVibesFilterBar();
-            renderBookshelf();
+            renderMediaGrid();
         }
 
-        function renderBookshelf() {
-            const grid = document.getElementById('bookshelfGrid');
+        // Expanded Core View Layout Engine supporting Directory Hierarchy + Sub-Series Bars
+        function renderMediaGrid() {
+            const grid = document.getElementById('mediaGrid');
+            const folderViewHeader = document.getElementById('folderContainer');
+            const filterConsolePanel = document.getElementById('filterConsolePanel');
             if (!grid) return;
             grid.innerHTML = '';
+            
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
 
-            books.forEach(book => {
-                const bookVibes = book.vibes || (book.vibe ? [book.vibe] : []);
-                const matchesSearch = book.title.toLowerCase().includes(searchTerm) || book.author.toLowerCase().includes(searchTerm);
-                const matchesGenre = activeFilterGenre === 'all' || bookVibes.includes(activeFilterGenre);
-                const matchesUniverse = activeFilterUniverse === 'all' || book.universe === activeFilterUniverse;
+            // 1. Scan memory nodes to calculate unique top-level folder names safely
+            let uniqueFolders = [];
+            books.forEach(item => {
+                let folderName = item.folder && item.folder.trim() !== "" ? item.folder.trim() : (currentView === "books" ? "My summer read list" : "Movie watch list");
+                if (!uniqueFolders.includes(folderName)) uniqueFolders.push(folderName);
+            });
 
-                if (matchesSearch && matchesGenre && matchesUniverse) {
+            // 2. TIER A: Root directory discovery folders view (Admin management tools embedded)
+            if (activeFolderFilter === "") {
+                if (folderViewHeader) folderViewHeader.classList.add('hidden');
+                if (filterConsolePanel) filterConsolePanel.classList.add('hidden');
+                
+                uniqueFolders.forEach(folder => {
+                    const count = books.filter(b => (b.folder || (currentView === "books" ? "My summer read list" : "Movie watch list")) === folder).length;
+                    
+                    const folderCard = document.createElement('div');
+                    folderCard.className = "y2k-folder-card p-6 flex flex-col items-center text-center space-y-2 justify-center relative";
+                    folderCard.onclick = () => enterFolderView(folder);
+                    
+                    folderCard.innerHTML = `
+                        <div class="y2k-folder-icon"><i class="fa-solid fa-folder"></i></div>
+                        <div class="w-full">
+                            <h4 class="font-extrabold text-xs text-gray-900 tracking-wider leading-tight uppercase bg-yellow-100/60 px-2 py-0.5 border border-dashed border-yellow-400 rounded truncate">${folder}</h4>
+                            <p class="text-[9px] text-gray-500 font-black mt-1">${count} ARCHIVES LOGGED</p>
+                        </div>
+                        <!-- Admin Control Tray Layer overlay buttons inside root folder view card frames -->
+                        <div class="admin-element hidden absolute bottom-1 right-2 left-2 flex justify-between gap-2 pt-1 mt-1 border-t border-dashed border-yellow-300">
+                            <button onclick="event.stopPropagation(); renameFolderDirectoryPrompt('${folder}')" class="text-[9px] font-black text-blue-600 hover:underline"><i class="fa-solid fa-pen"></i> RENAME</button>
+                            <button onclick="event.stopPropagation(); purgeFolderDirectory('${folder}')" class="text-[9px] font-black text-red-600 hover:underline"><i class="fa-solid fa-trash"></i> DELETE</button>
+                        </div>
+                    `;
+                    grid.appendChild(folderCard);
+                });
+                syncAdminElements();
+                return; 
+            }
+
+            // 3. TIER B: Expanded folder selection view layout (Brings back series/universe support)
+            if (folderViewHeader) {
+                folderViewHeader.classList.remove('hidden');
+                document.getElementById('currentFolderName').innerText = `📁 COLLECTION: ${activeFolderFilter.toUpperCase()}`;
+            }
+            if (filterConsolePanel) filterConsolePanel.classList.remove('hidden');
+
+            books.forEach(item => {
+                const itemVibes = item.vibes || [];
+                const itemFolder = item.folder || (currentView === "books" ? "My summer read list" : "Movie watch list");
+                
+                const matchesSearch = item.title.toLowerCase().includes(searchTerm) || item.author.toLowerCase().includes(searchTerm) || (item.universe && item.universe.toLowerCase().includes(searchTerm));
+                const matchesGenre = activeFilterGenre === 'all' || itemVibes.includes(activeFilterGenre);
+                const matchesUniverse = activeFilterUniverse === 'all' || item.universe === activeFilterUniverse;
+                const matchesFolder = itemFolder === activeFolderFilter;
+
+                if (matchesSearch && matchesGenre && matchesUniverse && matchesFolder) {
                     const starsHtml = Array.from({ length: 5 }, (_, i) => 
-                        `<i class="fa-star ${i < book.rating ? 'fa-solid text-yellow-400' : 'fa-regular text-gray-300'} text-xs"></i>`
+                        `<i class="fa-star ${i < item.rating ? 'fa-solid text-yellow-400' : 'fa-regular text-gray-300'} text-xs"></i>`
                     ).join('');
 
-                    const badgesHtml = bookVibes.map(v => 
+                    const badgesHtml = itemVibes.map(v => 
                         `<span class="inline-block px-1.5 py-0.5 border border-black text-[9px] font-extrabold uppercase rounded bg-pink-200 text-pink-700 w-max mr-1 mb-1">${v}</span>`
                     ).join('');
 
-                    const finalCoverUrl = book.coverUrl || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=300';
+                    const fallbackImage = currentView === "books" 
+                        ? 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=300' 
+                        : 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=300';
+                        
+                    const finalCoverUrl = item.coverUrl || fallbackImage;
                     const card = document.createElement('div');
-                    card.className = `book-card flex p-3 relative ${activeBookId === book.id ? 'ring-4 ring-[#ff1493]' : ''}`;
-                    card.style.backgroundColor = book.cardBg || '#ffffff';
-                    card.setAttribute('onclick', `selectBook('${book.id}')`);
+                    card.className = `book-card flex p-3 relative ${activeBookId === item.id ? 'ring-4 ring-[#ff1493]' : ''}`;
+                    card.style.backgroundColor = item.cardBg || '#ffffff';
+                    card.setAttribute('onclick', `selectMediaItem('${item.id}')`);
 
                     card.innerHTML = `
                         <div class="case-spine absolute left-0 top-0 h-full w-2"></div>
                         <div class="pl-4 flex flex-col justify-between w-full h-full">
                             <div class="flex space-x-3">
                                 <div class="w-20 h-28 border-2 border-black rounded relative overflow-hidden bg-pink-100 flex-shrink-0 shadow-sm">
-                                    <img src="${finalCoverUrl}" alt="${book.title}" class="w-full h-full object-cover">
+                                    <img src="${finalCoverUrl}" alt="${item.title}" class="w-full h-full object-cover">
                                 </div>
                                 <div class="flex-grow flex flex-col justify-start">
                                     <div class="flex flex-wrap gap-0.5 mb-1">
                                         ${badgesHtml}
-                                        ${book.universe ? `<span class="inline-block px-1.5 py-0.5 border border-black text-[9px] font-black uppercase rounded bg-purple-200 text-purple-700 w-max mb-1"><i class="fa-solid fa-folder-open mr-0.5"></i>${book.universe}</span>` : ''}
+                                        ${item.universe ? `<span class="inline-block px-1.5 py-0.5 border border-black text-[9px] font-black uppercase rounded bg-purple-200 text-purple-700 w-max mb-1"><i class="fa-solid fa-folder-open mr-0.5"></i>${item.universe}</span>` : ''}
                                     </div>
-                                    <h4 class="font-extrabold text-sm text-gray-900 leading-tight line-clamp-2">${book.title}</h4>
-                                    <p class="text-xs text-gray-500 font-semibold truncate mt-0.5">By ${book.author}</p>
+                                    <h4 class="font-extrabold text-sm text-gray-900 leading-tight line-clamp-2">${item.title}</h4>
+                                    <p class="text-xs text-gray-500 font-semibold truncate mt-0.5">${currentView === "books" ? "By" : "Dir:"} ${item.author}</p>
                                     <div class="flex space-x-0.5 mt-1">${starsHtml}</div>
                                 </div>
                             </div>
                             <div class="admin-element hidden flex justify-between items-center mt-3 pt-2 border-t border-dashed border-gray-300">
-                                <button onclick="event.stopPropagation(); openEditBookModal('${book.id}')" class="text-xs text-blue-500 hover:text-blue-700 font-extrabold"><i class="fa-solid fa-edit mr-0.5"></i> Edit</button>
-                                <button onclick="event.stopPropagation(); deleteBook('${book.id}')" class="text-xs text-red-500 hover:text-red-700 font-extrabold"><i class="fa-solid fa-trash mr-0.5"></i> Bin</button>
+                                <button onclick="event.stopPropagation(); openEditMediaModal('${item.id}')" class="text-xs text-blue-500 hover:text-blue-700 font-extrabold"><i class="fa-solid fa-edit mr-0.5"></i> Edit</button>
+                                <button onclick="event.stopPropagation(); deleteMediaItem('${item.id}')" class="text-xs text-red-500 hover:text-red-700 font-extrabold"><i class="fa-solid fa-trash mr-0.5"></i> Bin</button>
                             </div>
                         </div>
                     `;
@@ -654,24 +1636,92 @@
             syncAdminElements();
         }
 
-        function selectBook(id) {
+        // Folder Administration Function Utility Tools
+        function createNewFolderPrompt() {
+            const folderName = prompt("Enter a fresh title layout name for your custom directory folder wrapper:");
+            if (!folderName || folderName.trim() === "") return;
+            const cleaned = folderName.trim();
+            
+            // Generate a blank placeholder item card framework node so the site registers the directory space
+            const anchorPlaceholder = {
+                "id": "media-folder-anchor-" + Date.now(),
+                "title": "Directory Core Configuration Node",
+                "author": "System Engine",
+                "universe": "Placeholder Documentation",
+                "vibes": [vibes[0] || "Romance"],
+                "rating": 5,
+                "folder": cleaned,
+                "coverUrl": "",
+                "cardBg": "#ffffff",
+                "sections": [{ "title": "System Diagnostic Logs", "content": "Welcome to your fresh collection tier layout module window! Toggle your admin loop to append actual novel entries here safely.", "mediaUrl": "" }]
+            };
+            books.push(anchorPlaceholder);
+            saveActiveDataToStorage();
+            renderMediaGrid();
+            showToast(`Directory folder framework '${cleaned}' constructed successfully! 📁✨`);
+        }
+
+        function renameFolderDirectoryPrompt(oldName) {
+            const currentLabel = oldName === "Unassigned Ledger" ? "" : oldName;
+            const nextName = prompt(`Enter a new title frame for folder category directory card '${oldName}':`, currentLabel);
+            if (!nextName || nextName.trim() === "" || nextName.trim() === oldName) return;
+            const cleaned = nextName.trim();
+
+            books.forEach(b => {
+                const bFolder = b.folder || (currentView === "books" ? "My summer read list" : "Movie watch list");
+                if (bFolder === oldName) b.folder = cleaned;
+            });
+
+            saveActiveDataToStorage();
+            renderMediaGrid();
+            showToast(`Folder updated to: ${cleaned} 🏷️✨`);
+        }
+
+        function purgeFolderDirectory(folderName) {
+            if (!confirm(`CRITICAL DELETION REQUEST:\n\nAre you absolutely sure you want to drop the entire '${folderName}' folder?\nThis will erase all reviews stored inside it!`)) return;
+            
+            books = books.filter(b => {
+                const bFolder = b.folder || (currentView === "books" ? "My summer read list" : "Movie watch list");
+                return bFolder !== folderName;
+            });
+
+            saveActiveDataToStorage();
+            loadViewDataEngine();
+            showToast(`Directory directory database tier tree wiped safely! 🗑️`);
+        }
+
+        function enterFolderView(folderName) {
+            activeFolderFilter = folderName;
+            activeFilterUniverse = "all"; // Reset series subfilters upon switching directories
+            rebuildUniversesCache();
+            renderUniverseFilterBar();
+            renderMediaGrid();
+            
+            const firstInFolder = books.find(b => (b.folder || (currentView === "books" ? "My summer read list" : "Movie watch list")) === folderName);
+            if (firstInFolder) selectMediaItem(firstInFolder.id);
+        }
+
+        function exitFolderView() {
+            activeFolderFilter = "";
+            renderMediaGrid();
+        }
+
+        function selectMediaItem(id) {
             if (isVaultEditing) toggleEditVault();
             activeBookId = id;
-            const book = books.find(b => b.id === id);
-            if (!book) return;
+            const item = books.find(b => b.id === id);
+            if (!item) return;
 
-            renderBookshelf();
-
-            document.getElementById('vaultHeaderTitle').innerText = book.title;
-            document.getElementById('vaultHeaderAuthor').innerText = `By ${book.author}`;
+            document.getElementById('vaultHeaderTitle').innerText = item.title;
+            document.getElementById('vaultHeaderAuthor').innerText = `${currentView === "books" ? "By" : "Directed by"} ${item.author}`;
             document.getElementById('vaultHeaderRating').innerHTML = Array.from({ length: 5 }, (_, i) => 
-                `<i class="fa-star ${i < book.rating ? 'fa-solid' : 'fa-regular'} text-xs"></i>`
+                `<i class="fa-star ${i < item.rating ? 'fa-solid' : 'fa-regular'} text-xs"></i>`
             ).join('');
 
             const coverImg = document.getElementById('vaultHeaderCover');
             const noCoverSpan = document.getElementById('vaultHeaderNoCover');
-            if (book.coverUrl) {
-                coverImg.src = book.coverUrl;
+            if (item.coverUrl) {
+                coverImg.src = item.coverUrl;
                 coverImg.classList.remove('hidden');
                 noCoverSpan.classList.add('hidden');
             } else {
@@ -679,19 +1729,30 @@
                 noCoverSpan.classList.remove('hidden');
             }
 
-            if (!book.sections) book.sections = [];
+            if (!item.sections) item.sections = [];
             activeVibeIndex = 0;
             renderBinderTabsAndContent();
+        }
+
+        function clearBinderDisplay() {
+            document.getElementById('vaultHeaderTitle').innerText = "Select a Card";
+            document.getElementById('vaultHeaderAuthor').innerText = "";
+            document.getElementById('vaultHeaderRating').innerHTML = "";
+            document.getElementById('vaultHeaderCover').classList.add('hidden');
+            document.getElementById('vaultHeaderNoCover').classList.remove('hidden');
+            document.getElementById('binderTabsBar').innerHTML = '';
+            document.getElementById('panelSectionTitle').innerText = "Empty Section";
+            document.getElementById('panelSectionContent').innerText = "No entries logged for this selection node list.";
         }
 
         function renderBinderTabsAndContent() {
             const tabsBar = document.getElementById('binderTabsBar');
             if (!tabsBar) return;
             tabsBar.innerHTML = '';
-            const book = books.find(b => b.id === activeBookId);
-            if (!book) return;
+            const item = books.find(b => b.id === activeBookId);
+            if (!item) return;
 
-            book.sections.forEach((sec, idx) => {
+            item.sections.forEach((sec, idx) => {
                 const btn = document.createElement('button');
                 btn.onclick = () => { if (isVaultEditing) return; activeVibeIndex = idx; renderBinderTabsAndContent(); };
                 btn.className = `px-3 py-1 border-t-2 border-x-2 border-black rounded-t-lg font-extrabold text-xs tracking-tight transform transition-all mr-1 ${activeVibeIndex === idx ? 'bg-white text-pink-600 font-black translate-y-[2px]' : 'bg-pink-100/50 hover:bg-white text-gray-700'}`;
@@ -711,17 +1772,25 @@
             const activePanelBody = document.getElementById('panelSectionContent');
             const tray = document.getElementById('sectionManagementTray');
 
-            if (book.sections.length > 0 && book.sections[activeVibeIndex]) {
-                const currentSec = book.sections[activeVibeIndex];
+            if (item.sections.length > 0 && item.sections[activeVibeIndex]) {
+                const currentSec = item.sections[activeVibeIndex];
                 activePanelHead.innerText = currentSec.title;
                 
                 if (!isVaultEditing) {
                     let bodyHtml = formatTextToHtml(currentSec.content);
                     if (currentSec.mediaUrl) {
-                        bodyHtml += `
-                            <div class="mt-4 border-2 border-black rounded-lg overflow-hidden bg-white shadow-[2px_2px_0px_0px_#000]">
-                                <img src="${currentSec.mediaUrl}" alt="Vault Attachment" class="w-full h-auto max-h-60 object-contain mx-auto bg-gray-50">
-                            </div>`;
+                        const isPdf = currentSec.mediaUrl.toLowerCase().includes('.pdf');
+                        if (isPdf) {
+                            bodyHtml += `
+                                <div class="mt-4 border-2 border-black rounded-lg overflow-hidden bg-white shadow-[2px_2px_0px_0px_#000]">
+                                    <iframe src="${currentSec.mediaUrl}" class="w-full h-[500px] border-none" title="PDF Viewer"></iframe>
+                                </div>`;
+                        } else {
+                            bodyHtml += `
+                                <div class="mt-4 border-2 border-black rounded-lg overflow-hidden bg-white shadow-[2px_2px_0px_0px_#000]">
+                                    <img src="${currentSec.mediaUrl}" alt="Vault Attachment" class="w-full h-auto max-h-60 object-contain mx-auto bg-gray-50">
+                                </div>`;
+                        }
                     }
                     activePanelBody.innerHTML = bodyHtml;
                     tray.classList.add('hidden');
@@ -730,9 +1799,9 @@
                         <div id="editableTextContainer" class="outline-none min-h-[120px]" contenteditable="true">${currentSec.content || ''}</div>
                         <div class="mt-4 p-2 bg-pink-50 border-2 border-dashed border-pink-300 rounded-md">
                             <label class="block text-[10px] font-black uppercase text-pink-700 mb-1">
-                                <i class="fa-solid fa-paperclip mr-1"></i> Paste Image/Media URL:
+                                <i class="fa-solid fa-paperclip mr-1"></i> Paste Image or PDF Document URL:
                             </label>
-                            <input type="text" id="sectionMediaInput" value="${currentSec.mediaUrl || ''}" placeholder="https://example.com/image.jpg" 
+                            <input type="text" id="sectionMediaInput" value="${currentSec.mediaUrl || ''}" placeholder="https://example.com/image.jpg or document.pdf" 
                                 class="w-full border-2 border-black p-1 text-xs rounded focus:outline-none bg-white">
                         </div>
                     `;
@@ -746,8 +1815,8 @@
         }
 
         function toggleEditVault() {
-            const activeBook = books.find(b => b.id === activeBookId);
-            if (!activeBook) return;
+            const activeItem = books.find(b => b.id === activeBookId);
+            if (!activeItem) return;
 
             isVaultEditing = !isVaultEditing;
             const panelHead = document.getElementById('panelSectionTitle');
@@ -771,20 +1840,20 @@
         }
 
         function saveCurrentVaultEdits() {
-            const activeBook = books.find(b => b.id === activeBookId);
-            if (!activeBook) return;
+            const activeItem = books.find(b => b.id === activeBookId);
+            if (!activeItem) return;
             
             const panelHead = document.getElementById('panelSectionTitle');
             const editableText = document.getElementById('editableTextContainer');
             const mediaInput = document.getElementById('sectionMediaInput');
 
-            if (activeBook.sections[activeVibeIndex]) {
-                activeBook.sections[activeVibeIndex].title = panelHead.innerText.trim();
-                if (editableText) activeBook.sections[activeVibeIndex].content = editableText.innerText;
-                if (mediaInput) activeBook.sections[activeVibeIndex].mediaUrl = mediaInput.value.trim();
+            if (activeItem.sections[activeVibeIndex]) {
+                activeItem.sections[activeVibeIndex].title = panelHead.innerText.trim();
+                if (editableText) activeItem.sections[activeVibeIndex].content = editableText.innerText;
+                if (mediaInput) activeItem.sections[activeVibeIndex].mediaUrl = mediaInput.value.trim();
             }
 
-            saveBooksToStorage();
+            saveActiveDataToStorage();
             isVaultEditing = false;
             
             panelHead.contentEditable = "false";
@@ -799,36 +1868,36 @@
         }
 
         function addNewSectionBlueprint() {
-            const activeBook = books.find(b => b.id === activeBookId);
-            if (!activeBook) return;
+            const activeItem = books.find(b => b.id === activeBookId);
+            if (!activeItem) return;
             const name = prompt("Enter a title for your new review section layout:");
             if (!name || name.trim() === "") return;
-            activeBook.sections.push({ title: "📝 " + name.trim(), content: "Type your notes here...", mediaUrl: "" });
-            activeVibeIndex = activeBook.sections.length - 1;
+            activeItem.sections.push({ title: "📝 " + name.trim(), content: "Type your notes here...", mediaUrl: "" });
+            activeVibeIndex = activeItem.sections.length - 1;
             renderBinderTabsAndContent();
         }
 
         function renameCurrentSectionHeader() {
-            const activeBook = books.find(b => b.id === activeBookId);
-            if (!activeBook || !activeBook.sections[activeVibeIndex]) return;
-            const name = prompt("Enter new title layout:", activeBook.sections[activeVibeIndex].title);
+            const activeItem = books.find(b => b.id === activeBookId);
+            if (!activeItem || !activeItem.sections[activeVibeIndex]) return;
+            const name = prompt("Enter new title layout:", activeItem.sections[activeVibeIndex].title);
             if (name && name.trim() !== "") {
-                activeBook.sections[activeVibeIndex].title = name.trim();
+                activeItem.sections[activeVibeIndex].title = name.trim();
                 renderBinderTabsAndContent();
             }
         }
 
         function deleteCurrentSection() {
-            const activeBook = books.find(b => b.id === activeBookId);
-            if (!activeBook || !activeBook.sections[activeVibeIndex]) return;
+            const activeItem = books.find(b => b.id === activeBookId);
+            if (!activeItem || !activeItem.sections[activeVibeIndex]) return;
             if (confirm("Erase this section?")) {
-                activeBook.sections.splice(activeVibeIndex, 1);
+                activeItem.sections.splice(activeVibeIndex, 1);
                 activeVibeIndex = 0;
                 renderBinderTabsAndContent();
             }
         }
 
-        function openAddBookModal() {
+        function openAddMediaModal() {
             document.getElementById('modalBookId').value = '';
             document.getElementById('modalTitle').value = '';
             document.getElementById('modalAuthor').value = '';
@@ -837,30 +1906,43 @@
             document.getElementById('modalCoverUrl').value = '';
             document.getElementById('modalCardBg').value = '#ffffff';
             
+            if (currentView === "books") {
+                document.getElementById('modalMainHeading').innerText = "MANAGE BOOK RECORD";
+                document.getElementById('lblModalTitle').innerText = "Book Title *";
+                document.getElementById('lblModalAuthor').innerText = "Author Name *";
+                document.getElementById('lblModalUniverse').innerText = "Series Name / Universe Layout (Optional)";
+            } else {
+                document.getElementById('modalMainHeading').innerText = "MANAGE MOVIE RECORD";
+                document.getElementById('lblModalTitle').innerText = "Movie Title *";
+                document.getElementById('lblModalAuthor').innerText = "Director / Studio *";
+                document.getElementById('lblModalUniverse').innerText = "Collection Type Layout (Optional)";
+            }
+
             const checkboxes = document.querySelectorAll('input[name="modalVibeCheckboxes"]');
             checkboxes.forEach(cb => cb.checked = false);
 
             document.getElementById('addBookModal').classList.remove('hidden');
         }
 
-        function openEditBookModal(bookId) {
-            const book = books.find(b => b.id === bookId);
-            if (!book) return;
-            document.getElementById('modalBookId').value = book.id;
-            document.getElementById('modalTitle').value = book.title;
-            document.getElementById('modalAuthor').value = book.author;
-            document.getElementById('modalUniverse').value = book.universe || '';
-            setModalRating(book.rating);
-            document.getElementById('modalCoverUrl').value = book.coverUrl || '';
-            document.getElementById('modalCardBg').value = book.cardBg || '#ffffff';
+        function openEditMediaModal(itemId) {
+            const item = books.find(b => b.id === itemId);
+            if (!item) return;
             
-            const bookVibes = book.vibes || (book.vibe ? [book.vibe] : []);
+            openAddMediaModal(); 
+            
+            document.getElementById('modalBookId').value = item.id;
+            document.getElementById('modalTitle').value = item.title;
+            document.getElementById('modalAuthor').value = item.author;
+            document.getElementById('modalUniverse').value = item.universe || '';
+            setModalRating(item.rating);
+            document.getElementById('modalCoverUrl').value = item.coverUrl || '';
+            document.getElementById('modalCardBg').value = item.cardBg || '#ffffff';
+            
+            const itemVibes = item.vibes || [];
             const checkboxes = document.querySelectorAll('input[name="modalVibeCheckboxes"]');
             checkboxes.forEach(cb => {
-                cb.checked = bookVibes.includes(cb.value);
+                cb.checked = itemVibes.includes(cb.value);
             });
-
-            document.getElementById('addBookModal').classList.remove('hidden');
         }
 
         function closeAddBookModal() { document.getElementById('addBookModal').classList.add('hidden'); }
@@ -870,63 +1952,70 @@
             icons.forEach((icon, idx) => icon.className = idx < stars ? "fa-star fa-solid text-yellow-400" : "fa-star fa-regular text-gray-300");
         }
 
-        function saveBookFromModal() {
+        function saveMediaFromModal() {
             const title = document.getElementById('modalTitle').value.trim();
             const author = document.getElementById('modalAuthor').value.trim();
             const universe = document.getElementById('modalUniverse').value.trim();
             const cardBg = document.getElementById('modalCardBg').value;
             const coverUrl = document.getElementById('modalCoverUrl').value.trim();
-            const bookId = document.getElementById('modalBookId').value;
+            const itemId = document.getElementById('modalBookId').value;
 
             const selectedVibes = [];
             const checkboxes = document.querySelectorAll('input[name="modalVibeCheckboxes"]:checked');
             checkboxes.forEach(cb => selectedVibes.push(cb.value));
 
-            if (!title || !author) { showToast("Missing structural criteria fields!"); return; }
-            if (selectedVibes.length === 0) { showToast("Please select at least one Vibe check!"); return; }
+            if (!title || !author) { showToast("Missing structural text fields!"); return; }
+            if (selectedVibes.length === 0) { showToast("Please select at least one Vibe!"); return; }
 
-            if (bookId) {
-                const book = books.find(b => b.id === bookId);
-                if (book) {
-                    book.title = title; book.author = author; book.universe = universe;
-                    book.vibes = selectedVibes; book.rating = selectedModalRating;
-                    book.coverUrl = coverUrl; book.cardBg = cardBg;
+            const folderDest = activeFolderFilter !== "" ? activeFolderFilter : (currentView === "books" ? "My summer read list" : "Movie watch list");
+
+            if (itemId) {
+                const item = books.find(b => b.id === itemId);
+                if (item) {
+                    item.title = title; item.author = author; item.universe = universe;
+                    item.vibes = selectedVibes; item.rating = selectedModalRating;
+                    item.coverUrl = coverUrl; item.cardBg = cardBg;
                 }
             } else {
-                const newBook = {
-                    id: "book-" + Date.now(),
+                const newRecord = {
+                    id: "media-" + Date.now(),
                     title: title, author: author, universe: universe, vibes: selectedVibes,
                     rating: selectedModalRating, coverUrl: coverUrl, cardBg: cardBg,
+                    folder: folderDest, 
                     sections: [
-                        { title: "💭 Thoughts & Commentary", content: "Type your observations here...", mediaUrl: "" },
-                        { title: "💚 Character Deep Dive", content: "Track character tropes here...", mediaUrl: "" }
+                        { title: currentView === "books" ? "💭 Thoughts & Commentary" : "💭 Movie Review", content: "Type summary notes here...", mediaUrl: "" },
+                        { title: "💚 Highlight Metrics", content: "Track favorite tropes or green flags here...", mediaUrl: "" }
                     ]
                 };
-                books.push(newBook);
-                activeBookId = newBook.id;
+                books.push(newRecord);
+                activeBookId = newRecord.id;
             }
 
-            saveBooksToStorage();
+            saveActiveDataToStorage();
             rebuildUniversesCache();
             renderUniverseFilterBar();
-            renderBookshelf();
-            selectBook(activeBookId);
+            renderMediaGrid();
+            selectMediaItem(activeBookId);
             closeAddBookModal();
-            showToast("Vault saved safely! ✨");
+            showToast("Vault record changes deployed! ✨");
         }
 
-        function deleteBook(id) {
-            if (!confirm("Drop this novel module?")) return;
+        function deleteMediaItem(id) {
+            if (!confirm("Erase this module entry from your archive database?")) return;
             books = books.filter(b => b.id !== id);
-            if (activeBookId === id) activeBookId = books.length > 0 ? books[0].id : '';
-            saveBooksToStorage();
+            activeBookId = books.length > 0 ? books[0].id : '';
+            saveActiveDataToStorage();
             rebuildUniversesCache();
             renderUniverseFilterBar();
-            renderBookshelf();
-            if (activeBookId) selectBook(activeBookId);
+            renderMediaGrid();
+            if (activeBookId) {
+                selectMediaItem(activeBookId);
+            } else {
+                clearBinderDisplay();
+            }
         }
 
-        function filterBooks() { renderBookshelf(); }
+        function filterMedia() { renderMediaGrid(); }
         function formatTextToHtml(text) { return text ? text.replace(/\n/g, '<br>') : ""; }
         function showToast(msg) {
             const t = document.getElementById('toastNotification');
@@ -989,7 +2078,9 @@
                 }
                 secretCode = "";
                 renderVibesFilterBar();
+                renderUniverseFilterBar(); // Rebuild series filters inside administration switches
                 renderBinderTabsAndContent();
+                renderMediaGrid(); // Instantly displays folder controls on current workspace tier view frame
             }
         });
     </script>
